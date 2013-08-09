@@ -7,6 +7,11 @@ items. A CRF version is a excel sheet, which underlies the schema of the open cl
 
 Getting started
 ---------------
-Console application:
-1. specify the paths of versions in the config.properties file
-2. ant runDiffCalculator
+<b>Console application:</b>
+<ol>
+<li>Specify the paths of versions in the config.properties file</li>
+<li>Run ant runDiffCalculator</li>
+<li>The program will generate a test.log file with the number of equal,added, deleted and modified items of two versions.
+Furthermore, it shows the modified items with the property changes.
+ </li>
+</ol>
