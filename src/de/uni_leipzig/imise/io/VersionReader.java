@@ -146,11 +146,8 @@ public class VersionReader {
 				Collections.addAll(list, version.getItems().values().toArray(new Item[]{}));
 				Collections.sort(list);
 				for (Item i :list){
+					System.out.println(i);
 					
-					if (i.getProperties().size()==24){
-						System.out.println(i);
-						count++;
-					}
 				}
 				log.info("number of items with full properties:"+count);
 			} catch (IOException e) {

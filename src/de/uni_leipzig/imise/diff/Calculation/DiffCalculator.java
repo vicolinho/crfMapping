@@ -1,14 +1,25 @@
-package de.uni_leipzig.imise.diff.Calculation;
+package de.uni_leipzig.imise.diff.calculation;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 
 import de.uni_leipzig.imise.data.CRFVersion;
@@ -42,54 +53,51 @@ public class DiffCalculator {
 		this.findEqualItems(v1, v2);
 		List <Item> oldItems = new ArrayList<Item>();
 		List <Item> newItems = new ArrayList<Item>();
+		
 		for (Item oldItem : deletedItems){
+			TreeMap<Float,ItemMapping> topMatches = new TreeMap<Float,ItemMapping>();
 			
-			List<String> diffProperties=null;
+			
 			for (Item newItem: addedItems){
-				diffProperties = oldItem.diff(newItem,0.95f);
-				if (diffProperties!= null){
-					HashMap<String, PropertyMapping> itemModifiedMap = new HashMap<String,PropertyMapping>();
-					for (String property : diffProperties){
-						PropertyMapping m = new PropertyMapping(oldItem.getProperties().get(property),
-								newItem.getProperties().get(property));
-						itemModifiedMap.put(property, m);
-					}
-					oldItems.add(oldItem);newItems.add(newItem);
-					
-					
+				float sim = oldItem.match(newItem);
+				if (sim>0.6f){// potential modified mapping
 					ItemMapping im = new ItemMapping(oldItem,newItem);
-					this.modifiedItems.put(im, itemModifiedMap);
-					break;
+					topMatches.put(sim, im);	
 				}
 			}//each new item
+			if (!topMatches.isEmpty()){
+				ItemMapping im = topMatches.lastEntry().getValue();
+				//choose the best mapping
+				List<String> diffProperties=null;
+				diffProperties = oldItem.diff(im.getNewItem());
+				HashMap<String, PropertyMapping> itemModifiedMap = new HashMap<String,PropertyMapping>();
+				//generate the property mapping with old and new value
+				for (String property : diffProperties){
+					PropertyMapping m = new PropertyMapping(oldItem.getProperties().get(property),
+							im.getNewItem().getProperties().get(property));
+					itemModifiedMap.put(property, m);
+				}
+				//delete the items from the set of added items and deleted items
+				oldItems.add(im.getOldItem());newItems.add(im.getNewItem());
+				this.modifiedItems.put(im, itemModifiedMap);
+			}
 		}//each old item
+		
 		this.deletedItems.removeAll(oldItems);
 		this.addedItems.removeAll(newItems);
-		this.findSynonymeItems();
-		
 	}
 	
-	private void findSynonymeItems(){
-		for (Item oldItem :this.deletedItems){
-			for (Item newItem : addedItems){
-				List<String> diff = oldItem.diffSynonyme(newItem);
-				if (diff.size()==0){
-					log.warning(oldItem.getItemLabel() +"is equal"+ newItem.getItemLabel());
-					
-				}
-			}
-		}
-	}
+	
 	
 	
 	private void findEqualItems(CRFVersion v1, CRFVersion v2){
 		Set<String> set1 = v1.getItems().keySet();
-		log.info(set1.size()+"");
+		//log.info(set1.size()+"");
 		Set<String> equalSet = new HashSet<String>();
 		Collections.addAll(equalSet, v1.getItems().keySet().toArray(new String[]{}));
 		Set<String> set2 = v2.getItems().keySet();
 		equalSet.retainAll(set2);
-		log.info(set1.size() +" "+ equalSet.size()+" "+set2.size());
+		//log.info(set1.size() +" "+ equalSet.size()+" "+set2.size());
 		for (String oldItem : set1){
 			if (!equalSet.contains(oldItem)){
 				deletedItems.add(v1.getItems().get(oldItem));
@@ -132,17 +140,33 @@ public class DiffCalculator {
 	public void setModifiedItems(HashMap<ItemMapping, HashMap<String, PropertyMapping>> modifiedItems) {
 		this.modifiedItems = modifiedItems;
 	}
-	public static void main (String[] args){
+	
+	
+	public static void main (String[] arg){
 		VersionReader vr = new VersionReader();
 		CRFVersion v1,v2;
 		long start = System.currentTimeMillis();
+		OutputStreamWriter fw = null; 
+		boolean isLogging = false;
 		try {
-		v1 = vr.readVersion(args[0]);
-		for (int i = 1; i<args.length;i++){
-			v2 = vr.readVersion(args[i]);
+			Properties p = new Properties();
+			p.load(new FileInputStream("config.properties"));
+			String[] files = p.getProperty("versions").split(";");
+			isLogging =Boolean.parseBoolean(p.getProperty("isLogging"));
+			if (isLogging){
+			Date d = new Date();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd-hh_mm");
+			FileOutputStream st =new FileOutputStream("test.log");
+			fw = new OutputStreamWriter(st,"UTF-8");
+			
+			}
+		v1 = vr.readVersion(files[0]);
+		for (int i = 1; i<files.length;i++){
+			v2 = vr.readVersion(files[i]);
 			DiffCalculator dc = new DiffCalculator ();
 			dc.calculateDiff(v1, v2);
 			float changeRatio = 1-(float)dc.getEqualItems().size()/(float)v2.getItems().size();
+			System.out.println("compare: "+ files[i-1]+" and "+files[i]);
 			System.out.println("items of v1: "+v1.getItems().size());
 			System.out.println("items of v2: "+v2.getItems().size());
 			System.out.println("equal Items: "+dc.getEqualItems().size());
@@ -151,13 +175,32 @@ public class DiffCalculator {
 			System.out.println("modified items:"+dc.getModifiedItems().size());
 			System.out.println ("modified items:" );
 			System.out.println("elapsed time: "+ (System.currentTimeMillis()-start));
+			if (isLogging){
+				
+				fw.append("compare: "+ files[i-1]+" and "+files[i]+System.getProperty("line.separator"));
+				fw.append("items of v1: "+v1.getItems().size()+System.getProperty("line.separator"));
+				fw.append("items of v2: "+v2.getItems().size()+System.getProperty("line.separator"));
+				fw.append("equal Items: "+dc.getEqualItems().size()+System.getProperty("line.separator"));
+				fw.append("deleted items "+ dc.getDeletedItems().size()+System.getProperty("line.separator"));
+				fw.append("added Items "+dc.getAddedItems().size()+System.getProperty("line.separator"));
+				fw.append("modified items:"+dc.getModifiedItems().size()+System.getProperty("line.separator"));
+				fw.append("---------------modified Items--------------------"+System.getProperty("line.separator"));
+			}
+			
 			for (Entry<ItemMapping,HashMap<String,PropertyMapping>>e :dc.getModifiedItems().entrySet()){
 				System.out.println(e.getKey().toString()+System.getProperty("line.separator")+"properties:"+
 			System.getProperty("line.separator")+e.getValue().toString());
+				if (isLogging){
+					fw.append(e.getKey().toString()+System.getProperty("line.separator")+"properties:"+
+			System.getProperty("line.separator")+e.getValue().toString()+System.getProperty("line.separator"));
+				}
 			}
 			
 			v1 =v2;	
 			}
+		if (isLogging){
+			fw.close();
+		}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -58,12 +58,8 @@ public class Item implements Comparable{
 		return this.itemLabel.equals(i2.itemLabel);
 	}
 	
-	public  List<String> diff(Item i2,float labThres){
-		String descr1 = (String) this.properties.get(ItemConstants.DESCRIPTION_LABEL);
-		String descr2 = (String) i2.properties.get(ItemConstants.DESCRIPTION_LABEL);
-		System.out.print(this.levensthein(this.itemLabel, i2.itemLabel));
-		if (this.levensthein(this.itemLabel, i2.itemLabel)>labThres*0.7&&
-				this.levensthein(descr1, descr2)>labThres){
+	public  List<String> diff(Item i2){
+	
 			List<String> diffList = new ArrayList<String>();
 			for (Entry<String,Object> e:this.properties.entrySet()){
 				Object o2 = i2.getProperties().get(e.getKey());
@@ -78,25 +74,17 @@ public class Item implements Comparable{
 				
 			}
 		return diffList;
-		}else return null;
 	}
 	
-	public List<String> diffSynonyme(Item i2){
-		List<String> diffList = new ArrayList<String>();
-		for (Entry<String,Object> e:this.properties.entrySet()){
-			Object o2 = i2.getProperties().get(e.getKey());
-			Object o =e.getValue();
-			if (o instanceof Double){
-				if (o!= o2)
-					diffList.add(e.getKey());
-			}else if (o instanceof String){
-				if (!o.equals(o2))
-					diffList.add(e.getKey());
-			}
-			
-		}
-	return diffList;
+	public float match(Item i2){
+		String descr1 = (String) this.properties.get(ItemConstants.DESCRIPTION_LABEL);
+		String descr2 = (String) i2.properties.get(ItemConstants.DESCRIPTION_LABEL);
+		float nameSim = this.levensthein(this.itemLabel, i2.itemLabel);
+		float descrSim= this.levensthein(descr1, descr2);
+		return (nameSim +descrSim)/2f;
 	}
+	
+	
 	
 	
 	private float levensthein (String s1,String s2){
