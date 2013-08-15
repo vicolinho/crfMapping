@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -37,6 +39,7 @@ public class VersionReader {
 	
 	private static final String RULES ="Rules";
 	public CRFVersion readVersion(String fileName) throws IOException{
+		int verNr = this.extractVersion(fileName);
 		FileInputStream fis = new FileInputStream(new File (fileName));
 		HSSFWorkbook versionBook= new HSSFWorkbook(fis,false); 
 		HSSFSheet versionSheet = versionBook.getSheet(CRF);
@@ -44,10 +47,21 @@ public class VersionReader {
 		HSSFSheet sectionSheet = versionBook.getSheet(SECTIONS);
 		HSSFSheet groupSheet = versionBook.getSheet(GROUPS);
 		CRFVersion version = new CRFVersion();
+		version.setVersion(verNr);
 		version.setItems(this.extractItems(itemSheet));
 		return version;
 	}
 	
+	private int extractVersion(String fileName) {
+		Pattern p = Pattern.compile("(?<=.{5,100})[1-9][0-9]{0,2}(?=.{0,10})");
+		Matcher m = p.matcher(fileName);
+		if (m.find()){
+			String v = m.group();
+			return Integer.parseInt(v);
+		}
+		return -1;
+	}
+
 	private HashMap<String,Item> extractItems(HSSFSheet itemSheet){
 		
 		boolean isEmpty = false;

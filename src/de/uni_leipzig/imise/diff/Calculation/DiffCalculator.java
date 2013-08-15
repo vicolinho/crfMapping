@@ -175,15 +175,22 @@ public class DiffCalculator {
 			System.out.println("modified items:"+dc.getModifiedItems().size());
 			System.out.println ("modified items:" );
 			System.out.println("elapsed time: "+ (System.currentTimeMillis()-start));
+			
+			
 			if (isLogging){
 				
-				fw.append("compare: "+ files[i-1]+" and "+files[i]+System.getProperty("line.separator"));
+				fw.append(System.getProperty("line.separator")+"compare: "+ files[i-1]+" and "+files[i]+System.getProperty("line.separator"));
 				fw.append("items of v1: "+v1.getItems().size()+System.getProperty("line.separator"));
 				fw.append("items of v2: "+v2.getItems().size()+System.getProperty("line.separator"));
 				fw.append("equal Items: "+dc.getEqualItems().size()+System.getProperty("line.separator"));
 				fw.append("deleted items "+ dc.getDeletedItems().size()+System.getProperty("line.separator"));
 				fw.append("added Items "+dc.getAddedItems().size()+System.getProperty("line.separator"));
 				fw.append("modified items:"+dc.getModifiedItems().size()+System.getProperty("line.separator"));
+				
+				fw.append("------------------added Items--------------------"+System.getProperty("line.separator"));
+				fw.append(dc.getAddedItems().toString()+System.getProperty("line.separator"));
+				fw.append("----------------deleted Items--------------------"+System.getProperty("line.separator"));
+				fw.append(dc.getDeletedItems().toString()+System.getProperty("line.separator"));
 				fw.append("---------------modified Items--------------------"+System.getProperty("line.separator"));
 			}
 			
