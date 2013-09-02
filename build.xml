@@ -9,11 +9,10 @@
     <property name="source" value="1.6"/>
 	
     <path id="crfMapping.classpath">
-        <pathelement location="build"/>
-        <pathelement location="lib/poi-3.9-20121203.jar"/>
-        <pathelement location="lib/log4j-1.2.13.jar"/>
-    	<pathelement location="lib/commons-logging-1.1.jar"/>
+       <fileset dir="lib" includes="**/*.jar"></fileset>
     </path>
+	
+	
     <target name="init">
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
@@ -41,8 +40,8 @@
  
 	<target name="compile">
 		<mkdir dir="bin"/>
-		<javac srcdir="src" destdir ="bin" includeantruntime ="false" >
-			<classpath refid="crfMapping.classpath"/>
+		<javac srcdir="src" destdir ="bin" classpathref="crfMapping.classpath" includeantruntime ="false" >
+			
 		</javac>
 	</target>
 	
@@ -55,7 +54,28 @@
 	                <path location="bin"/>
 	            </classpath>
 	        </java>
-	    </target>
+	</target>
+	
+	<target name="jar" depends="compile">
+		<delete dir="build/jar" />
+		<mkdir dir="build/jar"/>
+	   <jar destfile="build/jar/CRFTool.jar" basedir="bin">
+	       <manifest>
+	           <attribute name="Main-Class" value="de.uni_leipzig.imise.visualization.view.MainFrame"/>
+	       	   <attribute name="Class-Path" value="lib/*.jar"/>
+	       </manifest>
+	   </jar>
+	</target>
+	
+    <target name="DiffCRFTool" depends="jar" description="This task starts the GUI application jar file">
+    	<java classname="de.uni_leipzig.imise.visualization.view.MainFrame" fork="true">
+	    	<classpath>
+	    			<path refid="crfMapping.classpath" />
+	    		    <path location="build/jar/CRFTool.jar" />
+	    	</classpath>
+    	</java>
+    </target>
+
 </project>
 
 	

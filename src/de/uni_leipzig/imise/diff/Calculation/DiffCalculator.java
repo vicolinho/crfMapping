@@ -37,19 +37,29 @@ public class DiffCalculator {
 	
 	private List <Item> equalItems;
 	
-	private HashMap <ItemMapping,HashMap<String,PropertyMapping>> modifiedItems;
+	private HashMap<Item,Item> oldNewItemMap;
+	
+	private HashMap<Item,Item> newOldItemMap;
+	
+	/**
+	 * map of modified old item as key and the property mapping
+	 */
+	private HashMap<String, HashMap<String, PropertyMapping>> modifiedItems;
 	
 	
 	
 	
 	
 	public DiffCalculator(){
+		
+	}
+	public void calculateDiff(CRFVersion v1, CRFVersion v2){
 		this.addedItems = new ArrayList<Item>();
 		this.deletedItems = new ArrayList<Item>();
 		this.equalItems = new ArrayList<Item>();
-		 modifiedItems= new HashMap<ItemMapping,HashMap<String,PropertyMapping>>();
-	}
-	public void calculateDiff(CRFVersion v1, CRFVersion v2){
+		oldNewItemMap =new HashMap<Item,Item>();
+		newOldItemMap = new HashMap<Item,Item>();
+		modifiedItems= new HashMap<String,HashMap<String,PropertyMapping>>();
 		this.findEqualItems(v1, v2);
 		List <Item> oldItems = new ArrayList<Item>();
 		List <Item> newItems = new ArrayList<Item>();
@@ -79,7 +89,9 @@ public class DiffCalculator {
 				}
 				//delete the items from the set of added items and deleted items
 				oldItems.add(im.getOldItem());newItems.add(im.getNewItem());
-				this.modifiedItems.put(im, itemModifiedMap);
+				this.oldNewItemMap.put(oldItem, im.getNewItem());
+				this.newOldItemMap.put(im.getNewItem(), oldItem);
+				this.modifiedItems.put(oldItem.getItemLabel(), itemModifiedMap);
 			}
 		}//each old item
 		
@@ -134,14 +146,48 @@ public class DiffCalculator {
 	public void setEqualItems(List<Item> equalItems) {
 		this.equalItems = equalItems;
 	}
-	public HashMap<ItemMapping,HashMap<String,PropertyMapping>> getModifiedItems() {
+	public HashMap<String, HashMap<String, PropertyMapping>> getModifiedItems() {
 		return modifiedItems;
 	}
-	public void setModifiedItems(HashMap<ItemMapping, HashMap<String, PropertyMapping>> modifiedItems) {
+	public void setModifiedItems(HashMap<String, HashMap<String, PropertyMapping>> modifiedItems) {
 		this.modifiedItems = modifiedItems;
 	}
 	
+	/**
+	 * @return the oldNewItemMap
+	 */
+	public HashMap<Item,Item> getOldNewItemMap() {
+		return oldNewItemMap;
+	}
+	/**
+	 * @param oldNewItemMap the oldNewItemMap to set
+	 */
+	public void setOldNewItemMap(HashMap<Item,Item> oldNewItemMap) {
+		this.oldNewItemMap = oldNewItemMap;
+	}
+	/**
+	 * @return the newOldItemMap
+	 */
+	public HashMap<Item,Item> getNewOldItemMap() {
+		return newOldItemMap;
+	}
+	/**
+	 * @param newOldItemMap the newOldItemMap to set
+	 */
+	public void setNewOldItemMap(HashMap<Item,Item> newOldItemMap) {
+		this.newOldItemMap = newOldItemMap;
+	}
 	
+	
+	public void clearAll(){
+		this.addedItems.clear();
+		this.deletedItems.clear();
+		this.equalItems.clear();
+		this.modifiedItems.clear();
+		oldNewItemMap.clear();
+		newOldItemMap.clear();
+		
+	}
 	public static void main (String[] arg){
 		VersionReader vr = new VersionReader();
 		CRFVersion v1,v2;
@@ -194,11 +240,13 @@ public class DiffCalculator {
 				fw.append("---------------modified Items--------------------"+System.getProperty("line.separator"));
 			}
 			
-			for (Entry<ItemMapping,HashMap<String,PropertyMapping>>e :dc.getModifiedItems().entrySet()){
-				System.out.println(e.getKey().toString()+System.getProperty("line.separator")+"properties:"+
+			for (Entry<String,HashMap<String,PropertyMapping>>e :dc.getModifiedItems().entrySet()){
+				System.out.println(e.getKey()+"-"+dc.getOldNewItemMap().get(v1.getItems().get(e.getKey())).getItemLabel()
+						+System.getProperty("line.separator")+"properties:"+
 			System.getProperty("line.separator")+e.getValue().toString());
 				if (isLogging){
-					fw.append(e.getKey().toString()+System.getProperty("line.separator")+"properties:"+
+					fw.append(e.getKey()+"-"+dc.getOldNewItemMap().get(v1.getItems().get(e.getKey())).getItemLabel()
+					+System.getProperty("line.separator")+"properties:"+
 			System.getProperty("line.separator")+e.getValue().toString()+System.getProperty("line.separator"));
 				}
 			}
@@ -215,4 +263,5 @@ public class DiffCalculator {
 		}
 		
 	}
+	
 }

@@ -39,8 +39,9 @@ public class VersionReader {
 	
 	private static final String RULES ="Rules";
 	public CRFVersion readVersion(String fileName) throws IOException{
-		int verNr = this.extractVersion(fileName);
-		FileInputStream fis = new FileInputStream(new File (fileName));
+		File f = new File (fileName);
+		int verNr = this.extractVersion(f.getName());
+		FileInputStream fis = new FileInputStream(f);
 		HSSFWorkbook versionBook= new HSSFWorkbook(fis,false); 
 		HSSFSheet versionSheet = versionBook.getSheet(CRF);
 		HSSFSheet itemSheet = versionBook.getSheet(ITEMS);
@@ -48,12 +49,14 @@ public class VersionReader {
 		HSSFSheet groupSheet = versionBook.getSheet(GROUPS);
 		CRFVersion version = new CRFVersion();
 		version.setVersion(verNr);
+		String name = f.getName().substring(0,f.getName().indexOf(verNr+""));
+		version.setName(name);
 		version.setItems(this.extractItems(itemSheet));
 		return version;
 	}
 	
 	private int extractVersion(String fileName) {
-		Pattern p = Pattern.compile("(?<=.{5,100})[1-9][0-9]{0,2}(?=.{0,10})");
+		Pattern p = Pattern.compile("[1-9][0-9]{0,2}(?=.{0,5}\\.xls)");
 		Matcher m = p.matcher(fileName);
 		if (m.find()){
 			String v = m.group();

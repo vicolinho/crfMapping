@@ -6,6 +6,7 @@ public class CRFVersion {
 
 	private int version;
 	
+	private String name;
 	private Map<String,Group> groups;
 	
 	private Map<String,Section> sections;
@@ -42,6 +43,20 @@ public class CRFVersion {
 
 	public void setItems(Map<String, Item> items) {
 		this.items = items;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	
