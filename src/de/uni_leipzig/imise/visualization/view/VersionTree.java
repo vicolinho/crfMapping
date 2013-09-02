@@ -108,7 +108,9 @@ public class VersionTree extends JTree{
 	}
 	
 	public void release(){
-		this.getSelectionModel().removeTreeSelectionListener(treeCtrl);
+		
+		this.root.setUserObject("version");
+		this.root.removeAllChildren();
 		this.itemNodeMap.clear();
 	}
 	

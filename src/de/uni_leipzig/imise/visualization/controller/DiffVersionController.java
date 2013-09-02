@@ -54,6 +54,7 @@ public class DiffVersionController implements ActionListener{
 					}
 				}
 				dvp.updateDiffTree();
+				dvp.updateDeletedTable();
 			}else {
 				JOptionPane.showConfirmDialog(null, "Sie müssen eine Menge von CRF Versionen vorab laden", "Keine Versionen", JOptionPane.WARNING_MESSAGE);
 			}

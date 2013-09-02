@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.border.TitledBorder;
 
 import de.uni_leipzig.imise.data.CRFVersion;
@@ -22,6 +23,7 @@ import de.uni_leipzig.imise.data.managment.DiffVersionManager;
 import de.uni_leipzig.imise.data.managment.VersionManager;
 import de.uni_leipzig.imise.visualization.controller.DiffTreeController;
 import de.uni_leipzig.imise.visualization.controller.DiffVersionController;
+import javax.swing.JSplitPane;
 
 public final class DiffPanel extends JPanel implements PropertyChangeListener{
 	
@@ -33,6 +35,10 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 	private VersionTree diffTree;
 	private JPanel diffTreePanel;
 	private JScrollPane view;
+	private JSplitPane splitPane;
+	private JPanel deletedPanel;
+	private DiffTableModel deletedItemModel;
+	private JTable deletedTable;
 	public DiffPanel(DiffTreeController dtc) {
 		super();
 		this.vm = VersionManager.getInstance();
@@ -54,17 +60,31 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 		btnDiffCalc.addActionListener(dcc);
 		calcPanel.add(btnDiffCalc);
 		this.add(calcPanel, BorderLayout.NORTH);
+		TitledBorder tb =new TitledBorder("Diff-Baum");
+		
+		splitPane = new JSplitPane();
+		splitPane.setResizeWeight(0.8);
 		
 		diffTreePanel = new JPanel(new BorderLayout());
-		TitledBorder tb =new TitledBorder("Diff-Baum");
 		diffTreePanel.setBorder(tb);
 		diffTreePanel.setPreferredSize(new Dimension(600,400));
+		
 		diffTree = new VersionTree(dtc);
 		
 		view = new JScrollPane();
 		diffTreePanel.add(view,BorderLayout.CENTER);
 		view.setViewportView(diffTree);
-		add(diffTreePanel, BorderLayout.CENTER);
+		splitPane.setLeftComponent(diffTreePanel);
+		TitledBorder tb2 = new TitledBorder("gelöschte Items");
+		deletedPanel = new JPanel (new BorderLayout());
+		deletedPanel.setBorder(tb2);
+		deletedItemModel =new DiffTableModel(CellConstants.VERSION_COL,CellConstants.ITEM_COL);
+		deletedTable = new JTable(deletedItemModel);
+		
+		JScrollPane pane =new JScrollPane(deletedTable);	
+		deletedPanel.add(pane,BorderLayout.CENTER);
+		splitPane.setRightComponent(deletedPanel);
+		add(splitPane, BorderLayout.CENTER);
 		
 		
 	}
@@ -101,8 +121,31 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 		diffTree.updateUI();
 	}
 	
+	public void updateDeletedTable(){
+		deletedItemModel.clear();
+		VersionPair beforeKey = dvm.getDiffVersionMap().lastKey();
+		
+		do{
+			DiffVersion dv = dvm.getDiffVersionMap().get(beforeKey);
+			List<Item> delItems = dv.getDeletedItems();
+			for (Item di : delItems){
+				int r = this.deletedItemModel.addRow();
+				this.deletedItemModel.setValueAt(beforeKey.getV1(), r, CellConstants.VERSION_COL);
+				this.deletedItemModel.setValueAt(di.getItemLabel(), r, CellConstants.ITEM_COL);
+			}
+			
+			beforeKey = dvm.getDiffVersionMap().lowerKey(beforeKey);
+		}while (beforeKey !=null);
+		
+		
+	}
 	
-	
+	public void clearAllComponents(){
+		this.diffTree.clearSelection();
+		this.diffTree.release();
+		deletedItemModel.clear();
+		
+	}
 	
 	public static void  main(String[] arg){
 		JFrame f = new JFrame();
@@ -116,6 +159,7 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 		if(evt.getSource() instanceof VersionManager){
 			if (evt.getPropertyName().equals(VersionManager.CLEAR_VERSIONS)){
 				this.dvm.clearAll();
+				this.clearAllComponents();
 			}
 		}
 		
