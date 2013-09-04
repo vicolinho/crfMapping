@@ -13,10 +13,12 @@ import javax.swing.JLabel;
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -26,12 +28,15 @@ import javax.swing.JScrollPane;
 
 public final class VersionPanel extends JPanel implements PropertyChangeListener{
 	
+	
+	private static final Logger log = Logger.getLogger(VersionPanel.class.getName());
 	public static final String ADD_VERSION_TREE = "addVersionTree";
 	private static final long serialVersionUID = 1L;
 
 	private VersionController vmc;
 	
 	private VersionManager vm ;
+	
 	private JPanel versionTreePanel;
 	private JComboBox<Integer> comboBox;
 	
@@ -43,6 +48,7 @@ public final class VersionPanel extends JPanel implements PropertyChangeListener
 	
 	public VersionPanel (){
 		super();
+		new PropertyChangeSupport(this);
 		this.versionFrameMap = new HashMap<Integer,JInternalFrame>();
 		vm =VersionManager.getInstance();
 		vm.addPropertyChangeListener(this);
@@ -114,18 +120,25 @@ public final class VersionPanel extends JPanel implements PropertyChangeListener
 		if (obj instanceof VersionManager){
 			if (name.equals(VersionManager.ADD_VERSIONS)){
 				comboVersionM.removeAllElements();
-				
 				TreeMap<Integer, CRFVersion> versions = (TreeMap<Integer, CRFVersion>) evt.getNewValue();
 				crfNamelabel.setText(versions.firstEntry().getValue().getName());
 				for (Entry<Integer,CRFVersion> v:versions.entrySet())
 					comboVersionM.addElement(v.getValue().getVersion());
 			}else if (name.equals(VersionManager.CLEAR_VERSIONS)){
+				log.info("release version frames");
 				this.comboVersionM.removeAllElements();
+				for (JInternalFrame f: this.versionFrameMap.values()){
+					f.dispose();
+				}
 				this.versionFrameMap.clear();
 				
 			}
 		}
 		
+	}
+
+	public VersionController getVersionController(){
+		return this.vmc;
 	}
 	
 	public static void main (String[] args){

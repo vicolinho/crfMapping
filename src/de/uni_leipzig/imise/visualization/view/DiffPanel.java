@@ -7,12 +7,14 @@ import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.TitledBorder;
 
 import de.uni_leipzig.imise.data.CRFVersion;
@@ -27,24 +29,24 @@ import javax.swing.JSplitPane;
 
 public final class DiffPanel extends JPanel implements PropertyChangeListener{
 	
-	public static final String DIFF_CALC = "diffCalcAction"; 
+	private static final Logger log = Logger.getLogger(DiffPanel.class.getName());
 	private VersionManager vm ;
 	private DiffVersionManager dvm;
-	private DiffVersionController dcc;
+	private DiffVersionController dvc;
 	private DiffTreeController dtc;
 	private VersionTree diffTree;
 	private JPanel diffTreePanel;
 	private JScrollPane view;
 	private JSplitPane splitPane;
 	private JPanel deletedPanel;
-	private DiffTableModel deletedItemModel;
+	private CRFTableModel deletedItemModel;
 	private JTable deletedTable;
 	public DiffPanel(DiffTreeController dtc) {
 		super();
 		this.vm = VersionManager.getInstance();
 		vm.addPropertyChangeListener(this);
 		this.dvm = DiffVersionManager.getInstance();
-		this.dcc = new DiffVersionController(vm,dvm,this);
+		this.dvc = new DiffVersionController(vm,dvm,this);
 		this.dtc = dtc;
 		this.initGui();
 	}
@@ -56,8 +58,8 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 		calcPanel.setLayout(new FlowLayout(FlowLayout.LEFT,2,2));
 		
 		JButton btnDiffCalc = new JButton("Unterschiede anzeigen");
-		btnDiffCalc.setActionCommand(DIFF_CALC);
-		btnDiffCalc.addActionListener(dcc);
+		btnDiffCalc.setActionCommand(EventConstants.DIFF_CALC);
+		btnDiffCalc.addActionListener(dvc);
 		calcPanel.add(btnDiffCalc);
 		this.add(calcPanel, BorderLayout.NORTH);
 		TitledBorder tb =new TitledBorder("Diff-Baum");
@@ -78,9 +80,10 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 		TitledBorder tb2 = new TitledBorder("gelöschte Items");
 		deletedPanel = new JPanel (new BorderLayout());
 		deletedPanel.setBorder(tb2);
-		deletedItemModel =new DiffTableModel(CellConstants.VERSION_COL,CellConstants.ITEM_COL);
+		deletedItemModel =new CRFTableModel(CellConstants.VERSION_COL,CellConstants.ITEM_COL);
 		deletedTable = new JTable(deletedItemModel);
-		
+		deletedTable.getSelectionModel().addListSelectionListener(dvc);
+		deletedTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane pane =new JScrollPane(deletedTable);	
 		deletedPanel.add(pane,BorderLayout.CENTER);
 		splitPane.setRightComponent(deletedPanel);
@@ -95,6 +98,7 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 		Integer beforeKey = vm.getVersions().lastKey();
 		CRFVersion lastVersion=vm.getVersions().get(beforeKey);
 		diffTree.loadVersion(lastVersion);
+		dtc.setVersion(beforeKey);
 		HashMap<String,List<String>> changeGraph = dvm.getChangeGraph();
 		HashMap<Item,List<VersionPair>> itemChangedPerVersion = dvm.getDiffVersionsPerItem(lastVersion);
 		for (Entry<Item,List<VersionPair>> e: itemChangedPerVersion.entrySet()){
@@ -136,13 +140,11 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 			
 			beforeKey = dvm.getDiffVersionMap().lowerKey(beforeKey);
 		}while (beforeKey !=null);
-		
-		
 	}
 	
 	public void clearAllComponents(){
 		this.diffTree.clearSelection();
-		this.diffTree.release();
+		this.diffTree.release(false);
 		deletedItemModel.clear();
 		
 	}
@@ -158,10 +160,21 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 	public void propertyChange(PropertyChangeEvent evt) {
 		if(evt.getSource() instanceof VersionManager){
 			if (evt.getPropertyName().equals(VersionManager.CLEAR_VERSIONS)){
+				log.info("release Diff Panel components");
 				this.dvm.clearAll();
 				this.clearAllComponents();
 			}
 		}
+		
+	}
+
+	public JTable getDeletedTable() {
+		// TODO Auto-generated method stub
+		return this.deletedTable;
+	}
+
+	public DiffVersionController getDiffController() {
+		return this.dvc;
 		
 	}
 

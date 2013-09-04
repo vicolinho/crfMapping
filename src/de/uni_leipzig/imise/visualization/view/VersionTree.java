@@ -5,8 +5,11 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EventObject;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.JFrame;
@@ -23,6 +26,7 @@ import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreeCellRenderer;
 
 import de.uni_leipzig.imise.data.CRFVersion;
+import de.uni_leipzig.imise.data.Item;
 import de.uni_leipzig.imise.visualization.controller.DiffTreeController;
 
 public class VersionTree extends JTree{
@@ -36,6 +40,7 @@ public class VersionTree extends JTree{
 	
 	private DefaultMutableTreeNode root;
 	private DiffTreeController treeCtrl;
+	private int version;
 	private HashMap<String,DefaultMutableTreeNode> itemNodeMap;
 	private TableNodeRenderer nodeRenderer;
 	private EditorNodeRenderer nodeEditor;
@@ -59,12 +64,26 @@ public class VersionTree extends JTree{
 		
 	}
 	
+	public VersionTree () {
+		super();
+		this.setRowHeight(0);
+		this.root = new DefaultMutableTreeNode("version");
+		this.model = new DefaultTreeModel(root);
+		this.itemNodeMap = new HashMap<String,DefaultMutableTreeNode>();
+		this.setModel(model);
+		
+	}
+	
 	
 	public void loadVersion(CRFVersion v){
+		this.version = v.getVersion();
 		this.root.setUserObject(v.getName()+v.getVersion());
-		for (String il:v.getItems().keySet()){
-			DefaultMutableTreeNode in = new DefaultMutableTreeNode(il);
-			this.itemNodeMap.put(il, in);
+		List <Item> itemList = new ArrayList<Item>();
+		itemList.addAll(v.getItems().values());
+		Collections.sort(itemList);
+		for (Item i:itemList){
+			DefaultMutableTreeNode in = new DefaultMutableTreeNode(i.getItemLabel());
+			this.itemNodeMap.put(i.getItemLabel(), in);
 			this.root.add(in);	
 			
 		}
@@ -80,16 +99,16 @@ public class VersionTree extends JTree{
 	public void addDiffForItem(String itemLabel, String type,int from ,int until,String modItem){
 		DefaultMutableTreeNode in= this.itemNodeMap.get(itemLabel);
 		DefaultMutableTreeNode diffNode;
-		DiffTableModel tableModel;
+		CRFTableModel tableModel;
 		if (in.getChildCount()==0){
 			diffNode = new DefaultMutableTreeNode();
-			tableModel = new DiffTableModel(CellConstants.VERSION_COL,CellConstants.ITEM_COL,
+			tableModel = new CRFTableModel(CellConstants.VERSION_COL,CellConstants.ITEM_COL,
 					CellConstants.TYPE_COL);
 			diffNode.setUserObject(tableModel);
 			in.add(diffNode);
 		}else {
 			diffNode = (DefaultMutableTreeNode) in.getChildAt(0);
-			tableModel = (DiffTableModel) diffNode.getUserObject();
+			tableModel = (CRFTableModel) diffNode.getUserObject();
 		}
 		
 	
@@ -107,12 +126,20 @@ public class VersionTree extends JTree{
 		
 	}
 	
-	public void release(){
+	public void release(boolean isVersionTree){
 		
 		this.root.setUserObject("version");
 		this.root.removeAllChildren();
+		if (!isVersionTree)
+			this.getSelectionModel().removeTreeSelectionListener(treeCtrl);
 		this.itemNodeMap.clear();
 	}
+	
+	public void releaseVersionTree(){
+		
+	}
+	
+	
 	
 	private class TableNodeRenderer extends JPanel implements TreeCellRenderer{
 
@@ -140,8 +167,8 @@ public class VersionTree extends JTree{
 				boolean hasFocus) {
 			
 			DefaultMutableTreeNode n = (DefaultMutableTreeNode) value;
-			if (n.getUserObject() instanceof DiffTableModel){
-				DiffTableModel dtm =(DiffTableModel) n.getUserObject();
+			if (n.getUserObject() instanceof CRFTableModel){
+				CRFTableModel dtm =(CRFTableModel) n.getUserObject();
 				dt.setModel(dtm);
 				dt.getColumn(CellConstants.ITEM_COL).setPreferredWidth(150);
 				dt.getColumn(CellConstants.VERSION_COL).setPreferredWidth(75);
@@ -190,7 +217,7 @@ public class VersionTree extends JTree{
 			try{
 				DefaultMutableTreeNode o = (DefaultMutableTreeNode) 
 						tree.getPathForLocation(me.getX(), me.getY()).getLastPathComponent();
-				if (o.getUserObject() instanceof DiffTableModel){
+				if (o.getUserObject() instanceof CRFTableModel){
 					return true;
 				}else return false;
 			}catch (NullPointerException e){
@@ -226,8 +253,8 @@ public class VersionTree extends JTree{
 		public Component getTreeCellEditorComponent(JTree tree, Object value,
 				boolean isSelected, boolean expanded, boolean leaf, int row) {
 			DefaultMutableTreeNode n = (DefaultMutableTreeNode) value;
-			if (n.getUserObject() instanceof DiffTableModel){
-				DiffTableModel dtm =(DiffTableModel) n.getUserObject();
+			if (n.getUserObject() instanceof CRFTableModel){
+				CRFTableModel dtm =(CRFTableModel) n.getUserObject();
 				dte.setModel(dtm);
 				//dte.invalidate();
 				dte.getColumn(CellConstants.ITEM_COL).setPreferredWidth(150);
@@ -248,6 +275,20 @@ public class VersionTree extends JTree{
 		f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		f.setContentPane(new VersionTree(null));
 	
+	}
+
+	/**
+	 * @return the version
+	 */
+	public int getVersion() {
+		return version;
+	}
+
+	/**
+	 * @param version the version to set
+	 */
+	public void setVersion(int version) {
+		this.version = version;
 	}
 
 	

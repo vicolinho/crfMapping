@@ -20,7 +20,7 @@ public class DiffTable extends JTable {
 	
 	}
 	
-	public DiffTable(DiffTableModel dtm){
+	public DiffTable(CRFTableModel dtm){
 		super(dtm);	
 		
 	}
@@ -41,7 +41,7 @@ public class DiffTable extends JTable {
 	}*/
 	
 	public static void main (String[] args){
-		DiffTableModel dtm = new DiffTableModel(CellConstants.VERSION_COL,CellConstants.ITEM_COL,
+		CRFTableModel dtm = new CRFTableModel(CellConstants.VERSION_COL,CellConstants.ITEM_COL,
 				CellConstants.MOD_TYPE);
 	
 		

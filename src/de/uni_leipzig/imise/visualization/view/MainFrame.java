@@ -17,6 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JTabbedPane;
 
 import de.uni_leipzig.imise.visualization.controller.DiffTreeController;
+import de.uni_leipzig.imise.visualization.controller.DiffVersionController;
 
 
 public class MainFrame extends JFrame{
@@ -39,6 +40,7 @@ public class MainFrame extends JFrame{
 	private DiffPanel diffPanel;
 	private DiffTreeController dtc;
 	private PropertyDiffPanel propPanel;
+	private ItemPanel itemPanel;
 	
 	public MainFrame(){
 		super();
@@ -54,6 +56,9 @@ public class MainFrame extends JFrame{
 		splitPane.setResizeWeight(0.3);
 		getContentPane().add(splitPane, BorderLayout.CENTER);
 		
+		vp = new VersionPanel();
+		splitPane.setLeftComponent(vp);
+		
 		JSplitPane splitPane_1 = new JSplitPane();
 		splitPane_1.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		splitPane.setRightComponent(splitPane_1);
@@ -62,16 +67,26 @@ public class MainFrame extends JFrame{
 		splitPane_1.setResizeWeight(0.6);
 		splitPane_1.setLeftComponent(diffPanel);
 		
+		JTabbedPane itemTab = new JTabbedPane ();
+		
 		propPanel = new PropertyDiffPanel();
 		dtc.addPropertyChangeListener(propPanel);
-		splitPane_1.setRightComponent(propPanel);
-		vp = new VersionPanel();
-		splitPane.setLeftComponent(vp);
+		itemTab.addTab("geänderte Eigenschaften", propPanel);
+		splitPane_1.setRightComponent(itemTab);
+		
+		itemPanel = new ItemPanel();
+		dtc.addPropertyChangeListener(itemPanel);
+		diffPanel.getDiffController().addPropertyChangeListener(itemPanel);
+		vp.getVersionController().addPropertyChangeListener(itemPanel);
+		itemTab.addTab("Item Details", itemPanel);
+		
+		this.pack();
 		this.setVisible(true);
 		
 	}
 	
 	public static void main (String[] args){
 		MainFrame f = new MainFrame();
+		
 	}
 }

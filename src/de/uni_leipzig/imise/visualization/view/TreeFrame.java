@@ -16,24 +16,30 @@ public class TreeFrame extends JInternalFrame {
 	
 	private int versionNr;
 	private VersionTree tree;
-	
+	private VersionController vmc;
 	
 	public TreeFrame(int version, VersionController vmc){
 		super();
 		versionNr = version;
+		this.vmc = vmc;
 		this.addInternalFrameListener(vmc);
 		this.setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
 		this.setClosable(true);
 		this.setAutoscrolls(true);
-		this.tree = new VersionTree(null);
+		this.tree = new VersionTree();
 		JPanel panel = new JPanel();
 		panel.add(tree);
+		tree.getSelectionModel().addTreeSelectionListener(this.vmc);
 		this.add(panel);
 		this.pack();
 		this.setVisible(true);
 		
 	}
 	
+	public void release(){
+		this.tree.release(true);
+		this.tree.removeTreeSelectionListener(this.vmc);
+	}
 	
 	public void initTree(CRFVersion v ){
 		tree.loadVersion(v);

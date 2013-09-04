@@ -7,25 +7,25 @@ import javax.swing.table.AbstractTableModel;
 
 
 
-public class DiffTableModel extends  AbstractTableModel {
+public class CRFTableModel extends  AbstractTableModel {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger log = Logger.getLogger(DiffTableModel.class.getName());
+	private static final Logger log = Logger.getLogger(CRFTableModel.class.getName());
 	
 	 private String[] columnNames;
 	 private HashMap<String,Integer> revColumnName;
 	 private HashMap<Integer,Row> data;
 	 
 	 
-	 public DiffTableModel(){
+	 public CRFTableModel(){
 		 data = new HashMap<Integer,Row>();
 	 }
 	 
-	 public DiffTableModel(String...columns ){
+	 public CRFTableModel(String...columns ){
 		 data = new HashMap<Integer,Row>();
 		 this.setColumns(columns);
 	 }

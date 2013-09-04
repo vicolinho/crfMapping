@@ -22,7 +22,7 @@ public class PropertyDiffPanel extends JPanel implements PropertyChangeListener 
 	
 	private JTable table;
 	
-	private DiffTableModel propertyModel; 
+	private CRFTableModel propertyModel; 
 	private VersionManager vm ;
 	private DiffVersionManager dvm;
 	public PropertyDiffPanel(){
@@ -34,7 +34,7 @@ public class PropertyDiffPanel extends JPanel implements PropertyChangeListener 
 		
 	}
 	private void  initGui(){
-		propertyModel = new DiffTableModel(CellConstants.PROPERTY_COL,CellConstants.OLD_VALUE,
+		propertyModel = new CRFTableModel(CellConstants.PROPERTY_COL,CellConstants.OLD_VALUE,
 				CellConstants.NEW_VALUE,CellConstants.RELEVANCE);
 		table = new JTable(propertyModel);
 		JScrollPane view = new JScrollPane(table);
@@ -43,23 +43,26 @@ public class PropertyDiffPanel extends JPanel implements PropertyChangeListener 
 	}
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getPropertyName().equals(DiffTreeController.SELECT_DIFF_ITEM)){
+		if (evt.getPropertyName().equals(EventConstants.SELECT_DIFF_ITEM)){
+			propertyModel.clear();
 			HashMap<String,String> map =(HashMap<String, String>) evt.getNewValue();
-			int v1 = Integer.parseInt(map.get(CellConstants.VERSION_COL));
-			Integer v2 = vm.getVersions().higherKey(v1);
-			if (v2 != null){
-				VersionPair vp = new VersionPair(v1,v2);
-				DiffVersion dv = dvm.getDiffVersionMap().get(vp);
-				HashMap<String, PropertyMapping> propMap=
-				  dv.getModifiedItems().get(map.get(CellConstants.ITEM_COL));
-				propertyModel.clear();
-				for (Entry<String,PropertyMapping> e: propMap.entrySet()){
-					int r = propertyModel.addRow();
-					propertyModel.setValueAt(e.getKey(), r, CellConstants.PROPERTY_COL);
-					propertyModel.setValueAt(e.getValue().getOldValue(), r, CellConstants.OLD_VALUE);
-					propertyModel.setValueAt(e.getValue().getNewValue(), r, CellConstants.NEW_VALUE);
-				}
-			}
+			if (map.size()>0){
+				int v1 = Integer.parseInt(map.get(CellConstants.VERSION_COL));
+				Integer v2 = vm.getVersions().higherKey(v1);
+				if (v2 != null){
+					VersionPair vp = new VersionPair(v1,v2);
+					DiffVersion dv = dvm.getDiffVersionMap().get(vp);
+					HashMap<String, PropertyMapping> propMap=
+					  dv.getModifiedItems().get(map.get(CellConstants.ITEM_COL));
+					
+					for (Entry<String,PropertyMapping> e: propMap.entrySet()){
+						int r = propertyModel.addRow();
+						propertyModel.setValueAt(e.getKey(), r, CellConstants.PROPERTY_COL);
+						propertyModel.setValueAt(e.getValue().getOldValue(), r, CellConstants.OLD_VALUE);
+						propertyModel.setValueAt(e.getValue().getNewValue(), r, CellConstants.NEW_VALUE);
+					}//for each property map
+				} //higher key is not null
+			}//map size >0
 		}
 		
 	}
