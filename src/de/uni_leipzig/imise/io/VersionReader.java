@@ -56,7 +56,7 @@ public class VersionReader {
 	}
 	
 	private int extractVersion(String fileName) {
-		Pattern p = Pattern.compile("[1-9][0-9]{0,2}(?=.{0,5}\\.xls)");
+		Pattern p = Pattern.compile("[1-9][0-9]{0,2}(?=\\.xls)");
 		Matcher m = p.matcher(fileName);
 		if (m.find()){
 			String v = m.group();
