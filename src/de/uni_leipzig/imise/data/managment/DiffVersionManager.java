@@ -33,6 +33,7 @@ public class DiffVersionManager {
 	//TODO Check that the manager is clear after loadings
 	public void clearAll(){
 		this.versionDiffMap.clear();
+		this.changeGraph.clear();
 	}
 	
 	public HashMap<Item,List<VersionPair>> getDiffVersionsPerItem(CRFVersion v){

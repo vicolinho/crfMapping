@@ -29,6 +29,7 @@ public class PropertyDiffPanel extends JPanel implements PropertyChangeListener 
 		
 		super(new BorderLayout());
 		this.vm = VersionManager.getInstance();
+		vm.addPropertyChangeListener(this);
 		this.dvm = DiffVersionManager.getInstance();
 		this.initGui();
 		
@@ -63,6 +64,8 @@ public class PropertyDiffPanel extends JPanel implements PropertyChangeListener 
 					}//for each property map
 				} //higher key is not null
 			}//map size >0
+		}else if (evt.getPropertyName().equals(VersionManager.CLEAR_VERSIONS)){
+			this.propertyModel.clear();
 		}
 		
 	}

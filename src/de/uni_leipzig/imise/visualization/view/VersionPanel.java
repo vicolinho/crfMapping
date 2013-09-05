@@ -127,9 +127,14 @@ public final class VersionPanel extends JPanel implements PropertyChangeListener
 			}else if (name.equals(VersionManager.CLEAR_VERSIONS)){
 				log.info("release version frames");
 				this.comboVersionM.removeAllElements();
-				for (JInternalFrame f: this.versionFrameMap.values()){
-					f.dispose();
+				for (Integer k: this.versionFrameMap.keySet()){
+					TreeFrame tf = (TreeFrame) this.versionFrameMap.get(k);
+				
+					//this.versionFrameMap.put(k, null);
+					tf.release();
+					//tf.dispose();
 				}
+				this.versionTreePanel.removeAll();
 				this.versionFrameMap.clear();
 				
 			}

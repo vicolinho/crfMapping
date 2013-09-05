@@ -67,8 +67,6 @@ public class VersionController implements ActionListener, InternalFrameListener,
 	public void internalFrameClosed(InternalFrameEvent e) {
 		TreeFrame f= (TreeFrame) e.getInternalFrame();
 		vp.removeTreeFrame(f.getVersion());
-		vp.remove(e.getInternalFrame());
-		
 	}
 
 	@Override
@@ -100,20 +98,22 @@ public class VersionController implements ActionListener, InternalFrameListener,
 	@Override
 	public void valueChanged(TreeSelectionEvent e) {
 		TreePath path = e.getNewLeadSelectionPath();
-		DefaultMutableTreeNode o = (DefaultMutableTreeNode) path.getPathComponent(0);
-		
-		if (path.getPathCount()==2){
-			String itemLabel = path.getLastPathComponent().toString();
-			HashMap<String,String> oldMap = new HashMap<String,String>();
-			for (Entry <String,String>entry :this.selectItemMap.entrySet()){
-				oldMap.put(entry.getKey(), entry.getValue());
-			}
-			selectItemMap.clear();
-			String version =selectedVersion+"";
-			this.selectItemMap.put(CellConstants.ITEM_COL, path.getLastPathComponent().toString());
-			this.selectItemMap.put(CellConstants.VERSION_COL, version.toString());
+		if (path!=null){
+			DefaultMutableTreeNode o = (DefaultMutableTreeNode) path.getPathComponent(0);
 			
-			change.firePropertyChange(EventConstants.SELECT_ITEM,oldMap, selectItemMap);
+			if (path.getPathCount()==2){
+				String itemLabel = path.getLastPathComponent().toString();
+				HashMap<String,String> oldMap = new HashMap<String,String>();
+				for (Entry <String,String>entry :this.selectItemMap.entrySet()){
+					oldMap.put(entry.getKey(), entry.getValue());
+				}
+				selectItemMap.clear();
+				String version =selectedVersion+"";
+				this.selectItemMap.put(CellConstants.ITEM_COL, path.getLastPathComponent().toString());
+				this.selectItemMap.put(CellConstants.VERSION_COL, version.toString());
+				
+				change.firePropertyChange(EventConstants.SELECT_ITEM,oldMap, selectItemMap);
+			}
 		}
 		
 	}
