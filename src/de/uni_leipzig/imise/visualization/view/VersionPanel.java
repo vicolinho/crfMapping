@@ -66,7 +66,7 @@ public final class VersionPanel extends JPanel implements PropertyChangeListener
 		crfNamelabel = new JLabel("");
 		panel.add(crfNamelabel);
 		
-		JLabel lblVersions = new JLabel("Versionenauswahl");
+		JLabel lblVersions = new JLabel("version choice");
 		lblVersions.setForeground(Color.BLUE);
 		panel.add(lblVersions);
 		
@@ -75,7 +75,7 @@ public final class VersionPanel extends JPanel implements PropertyChangeListener
 		comboBox.setModel(comboVersionM);
 		panel.add(comboBox);
 		
-		JButton btnAddVersion = new JButton("Hinzufügen");
+		JButton btnAddVersion = new JButton("show version");
 		btnAddVersion.setActionCommand(ADD_VERSION_TREE);
 		btnAddVersion.addActionListener(vmc);
 		panel.add(btnAddVersion);

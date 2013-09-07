@@ -71,14 +71,14 @@ public class MainFrame extends JFrame{
 		
 		propPanel = new PropertyDiffPanel();
 		dtc.addPropertyChangeListener(propPanel);
-		itemTab.addTab("geänderte Eigenschaften", propPanel);
+		itemTab.addTab("changed properties", propPanel);
 		splitPane_1.setRightComponent(itemTab);
 		
 		itemPanel = new ItemPanel();
 		dtc.addPropertyChangeListener(itemPanel);
 		diffPanel.getDiffController().addPropertyChangeListener(itemPanel);
 		vp.getVersionController().addPropertyChangeListener(itemPanel);
-		itemTab.addTab("Item Details", itemPanel);
+		itemTab.addTab("item details", itemPanel);
 		
 		this.pack();
 		this.setVisible(true);

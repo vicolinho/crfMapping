@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
@@ -29,9 +30,9 @@ public final class CRFMenuBar extends JMenuBar {
 	public CRFMenuBar(){
 		vm = VersionManager.getInstance();
 		vr = new VersionReader();
-		JMenu mnNewMenu = new JMenu("Datei");
+		JMenu mnNewMenu = new JMenu("File");
 		mnNewMenu.setSize(80, 20);
-		JMenuItem loadItem = new JMenuItem("Öffnen");
+		JMenuItem loadItem = new JMenuItem("Open");
 		loadItem.addActionListener(new ActionListener(){
 
 			@Override
@@ -51,11 +52,14 @@ public final class CRFMenuBar extends JMenuBar {
 	
 	
 	private List<CRFVersion> readFile(){
+		
+		JFileChooser.setDefaultLocale(Locale.ENGLISH);
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setMultiSelectionEnabled(true);
+		
 		fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
-		fileChooser.setDialogTitle("CRF Version laden");
-		int state = fileChooser.showDialog(null, "Laden");
+		fileChooser.setDialogTitle("Load CRF Version");
+		int state = fileChooser.showDialog(null, "load");
 		List<CRFVersion> versions = new ArrayList<CRFVersion>();
 		if (state == JFileChooser.APPROVE_OPTION){
 			fileChooser.getSelectedFile();
@@ -65,8 +69,8 @@ public final class CRFMenuBar extends JMenuBar {
 					CRFVersion v = vr.readVersion(f.getAbsolutePath());
 					versions.add(v);
 				} catch (IOException e) {
-					JOptionPane.showConfirmDialog(null, "Fehler beim Laden der CRF Version:"+ f.getName(),
-							"Ladefehler", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showConfirmDialog(null, "Error loading the CRF version:"+ f.getName(),
+							"load error", JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 				}
 			}

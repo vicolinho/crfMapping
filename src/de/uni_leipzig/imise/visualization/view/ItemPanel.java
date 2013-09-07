@@ -33,7 +33,7 @@ public class ItemPanel extends JPanel implements PropertyChangeListener{
 		super(new BorderLayout());
 		itemTableModel = new CRFTableModel(CellConstants.PROPERTY_COL,CellConstants.VALUE);
 		table = new JTable(itemTableModel);
-		tb = new TitledBorder("Item");
+		tb = new TitledBorder("item");
 		this.setBorder(tb);
 		JScrollPane pane =new JScrollPane(table);
 		this.add(pane,BorderLayout.CENTER);

@@ -57,12 +57,12 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 		JPanel calcPanel = new JPanel();
 		calcPanel.setLayout(new FlowLayout(FlowLayout.LEFT,2,2));
 		
-		JButton btnDiffCalc = new JButton("Unterschiede anzeigen");
+		JButton btnDiffCalc = new JButton("show changes");
 		btnDiffCalc.setActionCommand(EventConstants.DIFF_CALC);
 		btnDiffCalc.addActionListener(dvc);
 		calcPanel.add(btnDiffCalc);
 		this.add(calcPanel, BorderLayout.NORTH);
-		TitledBorder tb =new TitledBorder("Diff-Baum");
+		TitledBorder tb =new TitledBorder("diff-tree");
 		
 		splitPane = new JSplitPane();
 		splitPane.setResizeWeight(0.8);
@@ -77,7 +77,7 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 		diffTreePanel.add(view,BorderLayout.CENTER);
 		view.setViewportView(diffTree);
 		splitPane.setLeftComponent(diffTreePanel);
-		TitledBorder tb2 = new TitledBorder("gelöschte Items");
+		TitledBorder tb2 = new TitledBorder("deleted items");
 		deletedPanel = new JPanel (new BorderLayout());
 		deletedPanel.setBorder(tb2);
 		deletedItemModel =new CRFTableModel(CellConstants.VERSION_COL,CellConstants.ITEM_COL);
