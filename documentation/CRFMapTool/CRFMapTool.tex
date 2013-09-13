@@ -1,0 +1,67 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage}
+\usepackage{graphics}
+\usepackage[latin1]{inputenc}
+\usepackage{enumerate} 
+\usepackage{booktabs}  
+\usepackage {graphicx}
+\usepackage{listings}
+\usepackage[ngerman]{babel}
+\usepackage{color}
+\usepackage{url} 
+\urlstyle{rm}
+
+\definecolor{mygray}{rgb}{0.7,0.7,1}
+\lstset{  backgroundcolor=\color{mygray}}
+\author{Victor Christen\\
+	\url{ mam08bfa@studserv.uni-leipzig.de}}
+\title{Praktikum - CRF -Mapping Tool}
+\begin{document}
+\maketitle
+
+\section{Einleitung}
+Die Resultate einer Studie basieren auf der Auswertung der in jeder Phase erfassten Daten bzlg. eines Patienten oder Probanden. Diese Daten werden mittels eines CRF (Check Report Form) Bogen erfasst. Diesbezüglich enthält ein solcher Bogen eine Menge von Datenfeldern(Items), die für die spätere Auswertung relevant sind.
+Zu Beginn einer jeden Studie, werden deshalb für jede Phase einer Studie die relevanten Items inklusive ihrer Eigenschaften, Regeln und inhaltlichen Strukturierung ermittelt. Die Menge an CRF Bögen für die verschiedenen Studien können in einem klinischen Datenmanagmentsystem verwaltet werden, wie z.B. OpenClinica. Im Allgemeinen ist die Entwicklung eines CRF Bogens ein fortlaufender Prozeß, da im Verlauf der Studie fehlende oder unzureichend definierte Items identifiziert werden. Diese müssen in einer aktualisierten Version ergänzt bzw. geändert werden. Sei nun folgendes Szenario gegeben: Es wurden mittels eines CRF Bogens die relevanten Daten für die Phase der Aufnahme eines Patienten erfasst. Es wurde festgestellt, dass die Auswertung der Daten umständlich ist, so dass eine Anpassung des CRF Bogens erfolgen muss. Dennoch sollen die erfassten Daten weiter verwendet werden. Hierfür ist ein Mapping, eine Abbildung der alten Items auf die neuen Items, notwendig, um die alten Daten in das Schema des neuen CRF Bogens zu transformieren. \\
+Das Ziel dieser Arbeit ist die Entwicklung einer Applikation für die Generierung eines Mappings für eine Menge von CRF Versionen. Ein Mapping repräsentiert eine Abbildung von Items. Mithilfe eines Mappings ist ein effiziente Identifikation von gelöschten, hinzugefügten und geänderten Items erkennbar. Die Identifikation der Änderungen ist notwendig, um die Daten entsprechend auf das aktuelle Schema der aktuellen Version zu abzubilden. Eine Problematik bzgl. der Änderung von Items  ist die Relevanz der Änderung. Die Änderungen von Eigenschaften eines Items,die sich auf das Layout bzgl. des CRF Bogens beschränken, verursachen keine Änderung des medizinischen Konzepts, sodass existierende Daten auf das neue Item gemappt werden können. Die Transformation der Daten eines Items, deren medizinisches Konzept sich geändert hat, ist nicht ohne weiteres möglich.  
+\section{CRF Excel Spezifikation}
+Der Import eines CRF Bogens in das OpenClinica System erfolgt durch eine Excel Datei, die die enthaltenden Datenfelder mit ihren Eigenschaften, Abschnitten und potentiellen Regeln für die Items in Form von einzelnen Tabellen enthält. Das Schema der Excel Mappe entspricht dem Klassendiagramm in Abbildung \ref{fig:CRFExSchema}. \\
+\begin{figure}[th]%
+\includegraphics[width=\columnwidth]{figures/CRFClasses.png}%
+\caption{Datenschema der Excel Arbeitsmappe für einen CRF Bogen}%
+\label{fig:CRFExSchema}%
+\end{figure}
+Die Klassen entsprechen den einzelnen Tabellen und die Attribute einer Klasse repräsentieren die Spalten der Tabelle. Die \texttt{CRF} Tabelle beinhaltet Informationen bzgl. des Namens des CRF Bogens, der Version, einer Beschreibung sowie Bemerkungen bzgl. der Erstellung.\\
+Die \texttt{Sections} Tabelle definiert die layoutspezifische Struktur der Items des CRF's. Items, die das gleiche \texttt{section\_label} Attribut aufweisen, werden auf der gleichen Seite aufgeführt. Jede Section wird durch das \texttt{section\_label} Attribut identifiziert. Visuell wird jeder Abschnitt durch eine Überschrift getrennt, die durch den \texttt{section\_title} spezifiziert wird.\\
+Die \texttt{Groups} Tabelle ermöglicht die Gruppierung von Items. Items, die das gleiche \texttt{group\_label} besitzen, erscheinen zusammen im CRF.
+Die Daten, die für die Auswertung notwendig sind, werden durch die Items eines CRF Bogens definiert. Die Spezifikation eines Items beinhaltet die Eigenschaften die in der Tabelle \ref{table:Items} aufgelistet sind.
+\begin{table}%
+\includegraphics[width=0.8\columnwidth]{figures/ItemDescr.pdf}%
+\caption{Übersicht der Spalten der \texttt{Items} Tabelle}%
+\label{table:Items}%
+\end{table}
+\section{Realisierung}
+Die Applikation ist in Java implementiert und verwendet für das Auslesen der Excel Dateien die Apache POI \footnote{http://poi.apache.org/} Bibliothek. \\
+Der Unterabschnitt \ref{sec:schema} beschreibt das zugrundeliegende Datenschema der Applikation. Im Unterabschnitt \ref{sec:workflow} wird der prinzipielle Ablauf der Applikation beschrieben. Abschließend wird detailliert auf die Berechnung der Unterschiede bzgl. einer Menge von CRF Versionen eingegangen. 
+
+\subsection{Datenschema}\label{sec:schema}
+Um einer potentiellen Veränderung der Excel Datei Spezifikation entgegenzuwirken, wurde ein eigenes Datenschema für eine CRF Version konzipiert. Das Schema ist in Abbildung \ref{fig:CustomSchema} dargestellt.\\
+Die \texttt{CRFVersion} Klasse aggregiert die \texttt{Sections}, \texttt{Groups} und \texttt{Items} Tabelle in Form einer Hashmap mit dem jeweiligen \texttt{label} Attribut als Schlüssel und dem dazugehörigen Objekt der Klasse \texttt{Section}, \texttt{Group} bzw. \texttt {Item} als Wert. Die Klassen \texttt{Section}, \texttt{Group} und \texttt{Item} sind prinzipiell gleich aufgebaut. Als Identifier besitzen sie ein \texttt{(item|section|group)\_label} Attribut und eine Hashmap \texttt{propertyMap}, die die Werte aller Spalten einer \texttt{Section}, einer \texttt{Group}, bzw. eines \texttt{Item} beinhaltet. Die Namen der Spalten fungieren als Schlüssel für die \texttt{propertyMap} und werden in der jeweiligen \texttt{(Item|Section|Group)Constants} Klasse gespeichert. Somit ist durch die lose Koppelung der Spalten zu einem Objekt mittels der \texttt{propertyMap} und der Konstanten, eine Veränderung der CRF Excelspezifikation trivial realisierbar.
+\begin{figure}[ht!]
+\includegraphics[width=\columnwidth]{figures/CustomClasses.png}%
+\caption{Klassendiagramm für eine CRFVersion}%
+\label{fig:CustomSchema}%
+\end{figure}  
+\newpage
+\subsection{Allgemeiner Ablauf} \label{sec:workflow}
+Der allgemeine Ablauf der Applikationslogik ist in Abbildung \ref{fig:workflow} dargestellt. Zu Beginn spezifiziert der Anwender eine Menge von CRF Versionen. Die Dateien werden mittels der POI Bibliothek ausgelesen und zu Objekten des eigenen Datenschemas transformiert. Anschließend werden iterativ die Änderungen der CRF Versionen ermittelt und die Änderungen nach ihrer Relevanz klassifiziert. Bei jeder Iteration werden zwei aufeinander folgend Versionen miteinander verglichen und in der nächsten Iteration werden die alte zweite und die darauffolgende Version miteinander verglichen. Des Weiteren werden in jeder Iteration die Änderungen der Eigenschaften der Items bzlg. der Intensität ihres Ausmaßes klassifiziert. Nach der Ermittlung werden die Änderungen relativ zu der letzten Version visualisiert. 
+
+\begin{figure}[t!]
+\includegraphics[width=0.8\columnwidth]{figures/workflowEPK.png}%
+\caption{}%
+\label{fig:workflow}%
+\end{figure}
+\newpage
+\subsection{Diff-Berechnung}
+\section{Funktionsweise}
+
+\end{document}
