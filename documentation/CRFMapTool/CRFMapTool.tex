@@ -9,16 +9,19 @@
 \usepackage[ngerman]{babel}
 \usepackage{color}
 \usepackage{url} 
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage{float}
 \urlstyle{rm}
 
 \definecolor{mygray}{rgb}{0.7,0.7,1}
 \lstset{  backgroundcolor=\color{mygray}}
 \author{Victor Christen\\
 	\url{ mam08bfa@studserv.uni-leipzig.de}}
-\title{Praktikum - CRF -Mapping Tool}
+\title{Praktikum - CRF Mapping Tool}
 \begin{document}
 \maketitle
-
+\tableofcontents
+\newpage
 \section{Einleitung}
 Die Resultate einer Studie basieren auf der Auswertung der in jeder Phase erfassten Daten bzlg. eines Patienten oder Probanden. Diese Daten werden mittels eines CRF (Check Report Form) Bogen erfasst. Diesbezüglich enthält ein solcher Bogen eine Menge von Datenfeldern(Items), die für die spätere Auswertung relevant sind.
 Zu Beginn einer jeden Studie, werden deshalb für jede Phase einer Studie die relevanten Items inklusive ihrer Eigenschaften, Regeln und inhaltlichen Strukturierung ermittelt. Die Menge an CRF Bögen für die verschiedenen Studien können in einem klinischen Datenmanagmentsystem verwaltet werden, wie z.B. OpenClinica. Im Allgemeinen ist die Entwicklung eines CRF Bogens ein fortlaufender Prozeß, da im Verlauf der Studie fehlende oder unzureichend definierte Items identifiziert werden. Diese müssen in einer aktualisierten Version ergänzt bzw. geändert werden. Sei nun folgendes Szenario gegeben: Es wurden mittels eines CRF Bogens die relevanten Daten für die Phase der Aufnahme eines Patienten erfasst. Es wurde festgestellt, dass die Auswertung der Daten umständlich ist, so dass eine Anpassung des CRF Bogens erfolgen muss. Dennoch sollen die erfassten Daten weiter verwendet werden. Hierfür ist ein Mapping, eine Abbildung der alten Items auf die neuen Items, notwendig, um die alten Daten in das Schema des neuen CRF Bogens zu transformieren. \\
@@ -39,6 +42,7 @@ Die Daten, die für die Auswertung notwendig sind, werden durch die Items eines C
 \caption{Übersicht der Spalten der \texttt{Items} Tabelle}%
 \label{table:Items}%
 \end{table}
+\newpage
 \section{Realisierung}
 Die Applikation ist in Java implementiert und verwendet für das Auslesen der Excel Dateien die Apache POI \footnote{http://poi.apache.org/} Bibliothek. \\
 Der Unterabschnitt \ref{sec:schema} beschreibt das zugrundeliegende Datenschema der Applikation. Im Unterabschnitt \ref{sec:workflow} wird der prinzipielle Ablauf der Applikation beschrieben. Abschließend wird detailliert auf die Berechnung der Unterschiede bzgl. einer Menge von CRF Versionen eingegangen. 
@@ -53,15 +57,74 @@ Die \texttt{CRFVersion} Klasse aggregiert die \texttt{Sections}, \texttt{Groups}
 \end{figure}  
 \newpage
 \subsection{Allgemeiner Ablauf} \label{sec:workflow}
-Der allgemeine Ablauf der Applikationslogik ist in Abbildung \ref{fig:workflow} dargestellt. Zu Beginn spezifiziert der Anwender eine Menge von CRF Versionen. Die Dateien werden mittels der POI Bibliothek ausgelesen und zu Objekten des eigenen Datenschemas transformiert. Anschließend werden iterativ die Änderungen der CRF Versionen ermittelt und die Änderungen nach ihrer Relevanz klassifiziert. Bei jeder Iteration werden zwei aufeinander folgend Versionen miteinander verglichen und in der nächsten Iteration werden die alte zweite und die darauffolgende Version miteinander verglichen. Des Weiteren werden in jeder Iteration die Änderungen der Eigenschaften der Items bzlg. der Intensität ihres Ausmaßes klassifiziert. Nach der Ermittlung werden die Änderungen relativ zu der letzten Version visualisiert. 
-
+Der allgemeine Ablauf der Applikationslogik ist in Abbildung \ref{fig:workflow} dargestellt. Zu Beginn spezifiziert der Anwender eine Menge von CRF Versionen. Die Dateien werden mittels der POI Bibliothek ausgelesen und zu Objekten des eigenen Datenschemas transformiert. Anschließend werden iterativ die Änderungen der CRF Versionen ermittelt und die Änderungen nach ihrer Relevanz klassifiziert. Bei jeder Iteration werden zwei aufeinander folgend Versionen miteinander verglichen und in der nächsten Iteration werden die alte zweite und die darauffolgende Version miteinander verglichen. Des Weiteren werden in jeder Iteration die Änderungen der Eigenschaften der Items bzlg. der Intensität ihres Ausmaßes klassifiziert. Die Änderungen werden in Form eines Baumes visualisiert, indem die aktuelle Version als Bezugspunkt für alle Änderungen der CRF Versionen dient.
 \begin{figure}[t!]
 \includegraphics[width=0.8\columnwidth]{figures/workflowEPK.png}%
 \caption{}%
 \label{fig:workflow}%
 \end{figure}
-\newpage
 \subsection{Diff-Berechnung}
-\section{Funktionsweise}
+Die Menge der Änderungsoperationen wird als Diff bezeichnet. Die Ermittlung des Diff's für eine Menge von CRF Versionen basiert auf dem fortlaufenden Vergleich von zwei CRF Versionen. Im Folgenden wird das Verfahren für die Ermittlung näher beschrieben.\\
+Die Eingabe der Methode sind zwei CRF Versionen. Das Ergebnis ist eine Menge von gleichen, gelöschten, hinzugefügten und geänderten Items. Die geänderten Items werden als Mapping von altem Item zu neuem Item repräsentiert. Des Weiteren wird für jedes Mapping die Menge der geänderten Eigenschaften sowie der alte und der neue Wert gespeichert. Das Vorgehen ist im Algorithmus \ref{alg:diff} dargestellt. Jedes Item der alten Version wird mit jedem Item der neuen Version mittels des \texttt{item\_labels} verglichen. Wenn diese gleich sind, sind die Items gleich und ein Repräsentant wird zu der Menge $eqItemSet$, die die Menge der gleichen Items repräsentiert, hinzugefügt. Die Menge der gelöschten Items $delItemSet$ und der hinzugefügten Items $addItemSet$, lässt sich durch die Mengendifferenz von den Mengen der Items der alten Version und der gleichen Items bzw. der Items der neuen Version und der gleichen Items ermitteln. Da geänderte Items sich durch einen anderen Suffix beim \texttt{item\_label} unterscheiden, befinden sich den Mengen $delItemSet$ und $addItemSet$ eventuell geänderte Items. Um diese zu ermitteln, wird mithilfe eines Fuzzy- Matchers die Ähnlichkeit für jedes Item der $delItemSet$ Menge zwischen jedem Item der $addItemSet$ Menge ermittelt. Als geändertes Item wird das Paar angesehen, dessen Ähnlichkeit größer als ein Threshold $\delta(0.6)$ ist und das die höchste Ähnlichkeit aufweist. Anschließend wird für jedes Paar die Menge der geänderten Eigenschaften, die die Spalten repräsentieren, ermittelt. 
+\begin{algorithm}[t!] \label{alg:diff}
+\caption{Diff Berechnung für zwei CRF Versionen}
+\DontPrintSemicolon
+\SetKwData{io}{$oldItem$} \SetKwData{iN}{$newItem$} \SetKwData{ai}{$addItem$} \SetKwData{di}{$delItem$} 
+\SetKwData{op}{$oldPropertySet$} \SetKwData {np} {$newPropertySet$}
+\SetKwData{vo}{$oldVersion$} \SetKwData{vn}{$newVersion$} \SetKwData {eqI} {$eqItemSet$} \SetKwData {addI} {$addItemSet$}
+\SetKwData {delI} {$delItemSet$} \SetKwData {modI} {$modItemMap$} \SetKwData{propMap}{$propertyMap$}
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+\Input {\vo , \vn}
+\Output {\eqI, \addI, \delI, \modI, \propMap}
+\For {\io $\in$ \vo}{
+	\For {\iN $\in$ \vn}{
+		\If{ \io .item\_label = \iN .item\_label}{
+			\eqI $\leftarrow$ add(\iN)\; 
+		}
+	}
+}
+\delI= \vo $\backslash$ \eqI \;
+\addI = \vn $\backslash$ \eqI \;
 
+\For {\ai $\in$ \addI}{
+	$topMapping \leftarrow \emptyset$ 
+	\For {\di $\in$ \delI}{
+		$similarity = fuzzyMatch(\ai,\di)$ \;
+		
+		\If{$similarity \geq \delta$}{
+			$topMapping \leftarrow add(similarity,(\di,\ai))$
+		}
+			
+		\If{$topMapping \neq \emptyset$}{
+			(\di,\ai) = bestMapping($topMapping$)\;
+			\modI $\leftarrow$ add(\di,\ai)\;
+			\addI = \addI $\backslash$ \{ \ai \}\;
+			\delI = \delI $\backslash$ \{ \di \} \;
+			}
+	}
+}
+
+\For {$ (\io,\iN) \in  \modI$}{
+	\op = \io.properties\;
+	\np = \iN.properties\;
+	$modProperties$ = diff(\op,\np)\;
+	\propMap $\leftarrow$ add(modProperties)\;
+}
+\end{algorithm}
+\newpage
+\section{Funktionsweise}
+Die Applikation ist in drei Aspekte unterteilt, die Spezifikation der CRF Versionen, die Betrachtung der einzelnen CRF Versionen und die Betrachtung der Unterschiede der CRF Versionen im Bezug auf die aktuelle Version.\\
+Die Spezifikation der CRF Version erfolgt im Menü File/Open. Für die Betrachtung der Unterschiede müssen mindestens zwei Versionen eines CRF Bogens selektiert werden.\\
+Der Anwender ist in der Lage sich die einzelnen CRF Versionen einzeln zu betrachten (siehe Abb. \ref{fig:crfView}), indem er eine Version in der ComboBox selektiert und hinzufügt. Die selektierte Version wird als Baum, deren Blätter die Items repräsentieren, auf der linken Seite der Applikation dargestellt. Bei der Selektion eines Items können die Eigenschaften im unteren Teil der Anwendung betrachtet werden.\\
+\begin{figure}[t!]%
+\includegraphics[width=0.8\columnwidth]{figures/crfView.pdf}%
+\caption{Darstellung der Items einer CRF Version in einem Baum inklusive der Ansicht der Eigenschaften eines Items in einer Tabelle}%
+\label{fig:crfView}%
+\end{figure}
+Die Änderungen werden auf der rechten Seite des Programms (siehe Abb. \ref{fig:diffView}). Die Items der aktuellen Version werden in einem Baum dargestellt. Des Weiteren werden alle Änderungen die ein Item betreffen chronologisch in einer Tabelle als Blattknoten des betreffenden Items dargestellt. Die Tabelle enthält die Versionsnummer von der vorherigen Version, den Namen des alten Items und die Art der Änderung. Bei der Selektion eines Eintrages der Tabelle, werden die geänderten Eigenschaften im unteren Teil in einer Tabelle präsentiert. Diese Tabelle enthält den Namen der geänderten Eigenschaft, den alten und neuen Wert und die Relevanz der Änderung. Des Weiteren werden die gelöschten Items in einer separaten Tabelle chronologisch nach ihrem Löschzeitpunkt präsentiert, da diese in der aktuellen Version nicht vorhanden sind.
+\begin{figure}[b]%
+\includegraphics[width=0.8\columnwidth]{figures/diffView.pdf}%
+\caption{Darstellung der Änderung der geänderten Items und der geänderten Eigenschaften}%
+\label{fig:diffView}%
+\end{figure}
 \end{document}
