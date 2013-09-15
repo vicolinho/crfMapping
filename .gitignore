@@ -1,6 +1,7 @@
 *.class
 *.xls
-# Package Files #
+*.odg
 *.war
 *.ear
+# Package Files #
 bin
