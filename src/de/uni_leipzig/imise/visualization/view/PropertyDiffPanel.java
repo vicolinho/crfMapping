@@ -20,7 +20,7 @@ import de.uni_leipzig.imise.visualization.controller.DiffTreeController;
 public class PropertyDiffPanel extends JPanel implements PropertyChangeListener {
 
 	
-	private JTable table;
+	private DiffTable table;
 	
 	private CRFTableModel propertyModel; 
 	private VersionManager vm ;
@@ -37,7 +37,7 @@ public class PropertyDiffPanel extends JPanel implements PropertyChangeListener 
 	private void  initGui(){
 		propertyModel = new CRFTableModel(CellConstants.PROPERTY_COL,CellConstants.OLD_VALUE,
 				CellConstants.NEW_VALUE,CellConstants.RELEVANCE);
-		table = new JTable(propertyModel);
+		table = new DiffTable(propertyModel);
 		JScrollPane view = new JScrollPane(table);
 		this.add(view,BorderLayout.CENTER);
 		
