@@ -48,27 +48,27 @@ public class DiffVersionController implements ActionListener, ListSelectionListe
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals(EventConstants.DIFF_CALC)){
 			if (!vm.getVersions().isEmpty()){
-				for (Entry<Integer,CRFVersion> entry:vm.getVersions().entrySet()){
-					Integer nextKey = vm.getVersions().higherKey(entry.getKey());
-					if (nextKey!=null){
-						CRFVersion nextVersion = vm.getVersions().get(nextKey);
-						//diffCalculator.clearAll();
-						diffCalculator.calculateDiff(entry.getValue(), nextVersion);
-						VersionPair vp = new VersionPair(entry.getKey(),nextKey);
-						DiffVersion dv = new DiffVersion();
-						dv.setAddedItems(diffCalculator.getAddedItems());
-						dv.setDeletedItems(diffCalculator.getDeletedItems());
-						dv.setEqualItems(diffCalculator.getEqualItems());
-						dv.setModifiedItems(diffCalculator.getModifiedItems());
-						dv.setNewOldItemMap(diffCalculator.getNewOldItemMap());
-						dv.setOldNewItemMap(diffCalculator.getOldNewItemMap());
-						dvm.addDiff(vp, dv);
-						
-						
+				if (dvm.isEmpty()){
+					for (Entry<Integer,CRFVersion> entry:vm.getVersions().entrySet()){
+						Integer nextKey = vm.getVersions().higherKey(entry.getKey());
+						if (nextKey!=null){
+							CRFVersion nextVersion = vm.getVersions().get(nextKey);
+							//diffCalculator.clearAll();
+							diffCalculator.calculateDiff(entry.getValue(), nextVersion);
+							VersionPair vp = new VersionPair(entry.getKey(),nextKey);
+							DiffVersion dv = new DiffVersion();
+							dv.setAddedItems(diffCalculator.getAddedItems());
+							dv.setDeletedItems(diffCalculator.getDeletedItems());
+							dv.setEqualItems(diffCalculator.getEqualItems());
+							dv.setModifiedItems(diffCalculator.getModifiedItems());
+							dv.setNewOldItemMap(diffCalculator.getNewOldItemMap());
+							dv.setOldNewItemMap(diffCalculator.getOldNewItemMap());
+							dvm.addDiff(vp, dv);
+						}
 					}
+					dvp.updateDiffTree();
+					dvp.updateDeletedTable();
 				}
-				dvp.updateDiffTree();
-				dvp.updateDeletedTable();
 			}else {
 				JOptionPane.showConfirmDialog(null, "Sie müssen eine Menge von CRF Versionen vorab laden", "Keine Versionen", JOptionPane.WARNING_MESSAGE);
 			}

@@ -33,14 +33,12 @@ public class DiffTable extends JTable {
 	}
 	
 	public DiffTable(CRFTableModel dtm){
-		super(dtm);	
+		super(dtm);
+		ListCellRenderer lcr = new ListCellRenderer();
 		int ind =this.getColumnModel().getColumnIndex(CellConstants.NEW_VALUE);
 		int ind2= this.getColumnModel().getColumnIndex(CellConstants.OLD_VALUE);
-		ListCellRenderer lcr = new ListCellRenderer();
-		
 		this.getColumnModel().getColumn(ind).setCellRenderer(lcr);
 		this.getColumnModel().getColumn(ind2).setCellRenderer(lcr);
-		
 	}
 	
 	public DiffTable(DefaultTableModel dtm){

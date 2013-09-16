@@ -101,7 +101,9 @@ public class DiffVersionManager {
 		return this.changeGraph;
 	}
 	
-	
+	public boolean isEmpty(){
+		return this.versionDiffMap.isEmpty();
+	}
 	public static DiffVersionManager getInstance(){
 		if (instance ==null){
 			instance = new DiffVersionManager();
