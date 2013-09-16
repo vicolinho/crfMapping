@@ -72,7 +72,7 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 		diffTreePanel.setPreferredSize(new Dimension(600,400));
 		
 		diffTree = new VersionTree(dtc);
-		
+		diffTree.getSelectionModel().addTreeSelectionListener(dtc);
 		view = new JScrollPane();
 		diffTreePanel.add(view,BorderLayout.CENTER);
 		view.setViewportView(diffTree);
@@ -144,7 +144,7 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 	
 	public void clearAllComponents(){
 		this.diffTree.clearSelection();
-		this.diffTree.release(false);
+		this.diffTree.release();
 		deletedItemModel.clear();
 		
 	}

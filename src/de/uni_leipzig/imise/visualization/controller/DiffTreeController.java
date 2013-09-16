@@ -41,6 +41,7 @@ public class DiffTreeController implements TreeSelectionListener,ListSelectionLi
 	@Override
 	public void valueChanged(TreeSelectionEvent e) {
 		TreePath path = e.getNewLeadSelectionPath();
+		if (path!=null)
 		if (path.getPathCount()==2){
 			HashMap<String,String> oldMap = new HashMap<String,String>();
 			for (Entry <String,String>entry :this.selectItemMap.entrySet()){

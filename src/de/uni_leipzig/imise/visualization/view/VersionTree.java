@@ -60,7 +60,7 @@ public class VersionTree extends JTree{
 		
 		this.setModel(model);
 		
-		this.getSelectionModel().addTreeSelectionListener(treeCtrl);
+		
 		
 	}
 	
@@ -126,14 +126,12 @@ public class VersionTree extends JTree{
 		
 	}
 	
-	public void release(boolean isVersionTree){
+	public void release(){
 		
 		this.root.setUserObject("version");
 		this.root.removeAllChildren();
 		this.getSelectionModel().clearSelection();
 		this.updateUI();
-		if (!isVersionTree)
-			this.getSelectionModel().removeTreeSelectionListener(treeCtrl);
 		this.itemNodeMap.clear();
 	}
 	

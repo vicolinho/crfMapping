@@ -37,7 +37,7 @@ public class TreeFrame extends JInternalFrame {
 	}
 	
 	public void release(){
-		this.tree.release(true);
+		this.tree.release();
 		this.tree.removeTreeSelectionListener(this.vmc);
 	}
 	

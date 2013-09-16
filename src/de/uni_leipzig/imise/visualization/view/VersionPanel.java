@@ -136,7 +136,7 @@ public final class VersionPanel extends JPanel implements PropertyChangeListener
 				}
 				this.versionTreePanel.removeAll();
 				this.versionFrameMap.clear();
-				
+				this.versionTreePanel.updateUI();
 			}
 		}
 		
