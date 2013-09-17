@@ -86,11 +86,13 @@ public class DiffTable extends JTable {
 				Object value, boolean isSelected, boolean hasFocus, int row,
 				int column) {
 			String selColName = table.getColumnName(column);
+			String prop =(String) table.getValueAt(
+					row,table.getColumnModel().getColumnIndex(CellConstants.PROPERTY_COL));
 			String valueString = value.toString();
-			String [] valueArray = valueString.split(",|;");
+			String [] valueArray = valueString.split(",");
 			StringBuffer sb = new StringBuffer("<html><body>");
 			
-			if (valueArray.length>1){
+			if (valueArray.length>1&& prop.startsWith("RESPONSE")){
 				JLabel lab =new JLabel();
 				int otherIndex;
 				if (selColName.equals(CellConstants.OLD_VALUE))
@@ -101,7 +103,7 @@ public class DiffTable extends JTable {
 				if (selColName.equals(CellConstants.OLD_VALUE)||
 						selColName.equals(CellConstants.NEW_VALUE)){
 						String otherValue = (String) table.getModel().getValueAt(row, otherIndex);
-						String[] otherArray= otherValue.split(",|;");
+						String[] otherArray= otherValue.split(",");
 						
 						HashSet<String> newSet = new HashSet<String> ();
 						for (String v: otherArray) newSet.add(v);

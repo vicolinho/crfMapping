@@ -12,8 +12,10 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import de.uni_leipzig.imise.classification.ChangeClassifier;
 import de.uni_leipzig.imise.data.CRFVersion;
 import de.uni_leipzig.imise.data.DiffVersion;
+import de.uni_leipzig.imise.data.PropertyMapping;
 import de.uni_leipzig.imise.data.VersionPair;
 import de.uni_leipzig.imise.data.managment.DiffVersionManager;
 import de.uni_leipzig.imise.data.managment.VersionManager;
@@ -33,6 +35,7 @@ public class DiffVersionController implements ActionListener, ListSelectionListe
 	private DiffCalculator diffCalculator;
 	private PropertyChangeSupport change;
 	private HashMap<String,String> selectMap;
+	private ChangeClassifier changeClassifier;
 
 	public DiffVersionController(VersionManager vm, DiffVersionManager dvm,
 			DiffPanel dvp){
@@ -42,6 +45,7 @@ public class DiffVersionController implements ActionListener, ListSelectionListe
 		selectMap = new HashMap<String,String>();
 		this.change =new PropertyChangeSupport(this);
 		this.diffCalculator = new DiffCalculator();
+		this.changeClassifier = new ChangeClassifier();
 	}
 
 	@Override
@@ -55,12 +59,15 @@ public class DiffVersionController implements ActionListener, ListSelectionListe
 							CRFVersion nextVersion = vm.getVersions().get(nextKey);
 							//diffCalculator.clearAll();
 							diffCalculator.calculateDiff(entry.getValue(), nextVersion);
+							HashMap<String, HashMap<String, PropertyMapping>>propMap = 
+									changeClassifier.classify(diffCalculator.getModifiedItems());
 							VersionPair vp = new VersionPair(entry.getKey(),nextKey);
 							DiffVersion dv = new DiffVersion();
+							
 							dv.setAddedItems(diffCalculator.getAddedItems());
 							dv.setDeletedItems(diffCalculator.getDeletedItems());
 							dv.setEqualItems(diffCalculator.getEqualItems());
-							dv.setModifiedItems(diffCalculator.getModifiedItems());
+							dv.setModifiedItems(propMap);
 							dv.setNewOldItemMap(diffCalculator.getNewOldItemMap());
 							dv.setOldNewItemMap(diffCalculator.getOldNewItemMap());
 							dvm.addDiff(vp, dv);

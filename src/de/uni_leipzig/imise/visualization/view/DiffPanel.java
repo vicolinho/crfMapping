@@ -109,16 +109,12 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 				VersionPair vp = diffVersions.get(ver);
 				String itemLabel = items.get(ver);
 				DiffVersion dv = dvm.getDiffVersionMap().get(vp);
-				
-				if(itemLabel.equals(i.getItemLabel())){
+				CRFVersion v = vm.getVersions().get(vp.getV1());
+				Item oldItem = v.getItems().get(itemLabel);
+				if(!dv.getOldNewItemMap().containsKey(oldItem)){
 					diffTree.addDiffForItem(itemLabel, CellConstants.ADD_TYPE, vp.getV1(), vp.getV2(), itemLabel);
-				}else{
-					CRFVersion v = vm.getVersions().get(vp.getV1());
-					Item oldItem = v.getItems().get(itemLabel);
-					if (dv.getOldNewItemMap().containsKey(oldItem)){
-						diffTree.addDiffForItem(e.getKey().getItemLabel(), CellConstants.MOD_TYPE, vp.getV1(), vp.getV2(), itemLabel);
-					}
-						
+				}else{	
+					diffTree.addDiffForItem(e.getKey().getItemLabel(), CellConstants.MOD_TYPE, vp.getV1(), vp.getV2(), itemLabel);
 				}
 			}
 		}

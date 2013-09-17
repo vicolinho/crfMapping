@@ -54,9 +54,6 @@ public class Item implements Comparable{
 				properties.toString();
 	}
 	
-	public boolean equals (Item i2){
-		return this.itemLabel.equals(i2.itemLabel);
-	}
 	
 	public  List<String> diff(Item i2){
 	

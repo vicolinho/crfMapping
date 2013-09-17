@@ -61,6 +61,7 @@ public class PropertyDiffPanel extends JPanel implements PropertyChangeListener 
 						propertyModel.setValueAt(e.getKey(), r, CellConstants.PROPERTY_COL);
 						propertyModel.setValueAt(e.getValue().getOldValue(), r, CellConstants.OLD_VALUE);
 						propertyModel.setValueAt(e.getValue().getNewValue(), r, CellConstants.NEW_VALUE);
+						propertyModel.setValueAt(e.getValue().getRelevance(), r, CellConstants.RELEVANCE);
 					}//for each property map
 				} //higher key is not null
 			}//map size >0

@@ -21,7 +21,9 @@ import org.apache.poi.ss.usermodel.Cell;
 
 import de.uni_leipzig.imise.data.CRFVersion;
 import de.uni_leipzig.imise.data.Item;
+import de.uni_leipzig.imise.data.Section;
 import de.uni_leipzig.imise.data.constants.ItemConstants;
+import de.uni_leipzig.imise.data.constants.SectionConstants;
 
 
 
@@ -52,6 +54,7 @@ public class VersionReader {
 		String name = f.getName().substring(0,f.getName().indexOf(verNr+""));
 		version.setName(name);
 		version.setItems(this.extractItems(itemSheet));
+		version.setSections(this.extractSection(sectionSheet));
 		return version;
 	}
 	
@@ -149,6 +152,61 @@ public class VersionReader {
 		return itemMap;
 	}
 	
+	private Map<String,Section> extractSection (HSSFSheet secSheet){
+		HashMap<String,Section> sectionMap = new HashMap<String,Section>();
+		boolean isEmpty = false;
+		HashMap<Integer, String> dict = new HashMap<Integer,String>();
+		HashMap<String,Integer> revDict = new HashMap<String,Integer>();
+		int rowNr =0;
+		Iterator <Cell> cellIter;
+		while (!isEmpty){
+			HSSFRow row = secSheet.getRow(rowNr);
+			Section s= null;
+			if (row !=null){
+				if (rowNr ==0){
+					cellIter = row.cellIterator();
+					while (cellIter.hasNext()){
+						Cell c = cellIter.next();
+						dict.put(c.getColumnIndex(), c.getStringCellValue());
+						revDict.put(c.getStringCellValue(), c.getColumnIndex());
+					}
+				}else{
+					s = new Section();
+					s.setSectionLabel(row.getCell(revDict.get(SectionConstants.SECTION_LABEL)).getStringCellValue());
+					for (Entry<String,Integer> e :revDict.entrySet()){	
+						Cell c = row.getCell(e.getValue());	
+						String colName = e.getKey();
+						 if (s!=null){
+							Object value ="";
+							if(c!=null)
+							switch (c.getCellType()){
+								case Cell.CELL_TYPE_STRING:
+									value = c.getStringCellValue();
+									break;
+								case Cell.CELL_TYPE_NUMERIC:
+									value = c.getNumericCellValue()+"";
+									break;
+								case Cell.CELL_TYPE_BLANK:
+									value = "";
+									break;
+							}//switch
+							s.addProperty(colName, value);
+						}//section is not null
+					}//each column
+				}//not header row
+			}else{
+				isEmpty =true;
+			}
+			if (s!=null){
+				s.setPosition(rowNr);
+				sectionMap.put(s.getSectionLabel(), s);
+			}
+			rowNr++;
+		}// row not empty
+		
+		return sectionMap;
+	}
+	
 	
 	
 	public static void main(String[] args){
@@ -164,6 +222,12 @@ public class VersionReader {
 				Collections.sort(list);
 				for (Item i :list){
 					System.out.println(i);
+					
+				}
+				ArrayList<Section> secList = new ArrayList<Section>();
+				Collections.addAll(secList, version.getSections().values().toArray(new Section[]{}));
+				for (Section s :secList){
+					System.out.println(s);
 					
 				}
 				log.info("number of items with full properties:"+count);

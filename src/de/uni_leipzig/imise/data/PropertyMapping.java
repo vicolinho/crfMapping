@@ -7,6 +7,8 @@ public class PropertyMapping {
 		this.setNewValue(o2);
 	}
 
+	
+	private String relevance; 
 	private Object oldValue;
 	
 	private Object newValue;
@@ -46,6 +48,20 @@ public class PropertyMapping {
 
 	public String toString(){
 		return System.getProperty("line.separator")+"old:"+oldValue+System.getProperty("line.separator")+"new:"+newValue+System.getProperty("line.separator");
+	}
+
+	/**
+	 * @return the relevance
+	 */
+	public String getRelevance() {
+		return relevance;
+	}
+
+	/**
+	 * @param relevance the relevance to set
+	 */
+	public void setRelevance(String relevance) {
+		this.relevance = relevance;
 	}
 	
 }
