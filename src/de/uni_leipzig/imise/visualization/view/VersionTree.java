@@ -203,7 +203,6 @@ public class VersionTree extends JTree{
 			if (n instanceof CategoryNode){
 				CategoryNode cn = (CategoryNode) n;
 				if (cn.color!=null){
-					log.info("coloring");
 					dr.setBackground(cn.color);
 					dr.setOpaque(true);
 				}else{

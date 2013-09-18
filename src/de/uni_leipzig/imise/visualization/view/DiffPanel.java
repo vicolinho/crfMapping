@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -46,6 +47,7 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 	private CRFTableModel deletedItemModel;
 	private JTable deletedTable;
 	private JMenu mnNewMenu;
+	private List <JCheckBoxMenuItem> catItems;
 
 	private JMenuBar menuBar;
 	public DiffPanel(DiffTreeController dtc) {
@@ -55,6 +57,7 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 		this.dvm = DiffVersionManager.getInstance();
 		this.dvc = new DiffVersionController(vm,dvm,this);
 		this.dtc = dtc;
+		this.catItems =new ArrayList<JCheckBoxMenuItem>();
 		this.initGui();
 	}
 	
@@ -116,6 +119,7 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 			cbi.setSelected(true);
 			cbi.addActionListener(dvc);
 			this.mnNewMenu.add(cbi);
+			this.catItems.add(cbi);
 			
 			
 		}
@@ -183,6 +187,10 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 		this.diffTree.clearSelection();
 		this.diffTree.release();
 		deletedItemModel.clear();
+		for (JCheckBoxMenuItem bi : catItems){
+			bi.setSelected(true);
+		}
+		
 		
 	}
 	
