@@ -48,7 +48,7 @@ public class ChangeClassifier {
 					
 					if (e2.getValue().getNewValue().toString().startsWith(
 							e2.getValue().getOldValue().toString())){
-						cat+="specification";
+						cat+=" specification";
 					}
 					break;
 				}

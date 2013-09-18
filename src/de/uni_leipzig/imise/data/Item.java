@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uni_leipzig.imise.data.constants.ItemConstants;
+import de.uni_leipzig.imise.diff.calculation.Measures;
 
 public class Item implements Comparable{
 
@@ -76,41 +77,15 @@ public class Item implements Comparable{
 	public float match(Item i2){
 		String descr1 = (String) this.properties.get(ItemConstants.DESCRIPTION_LABEL);
 		String descr2 = (String) i2.properties.get(ItemConstants.DESCRIPTION_LABEL);
-		float nameSim = this.levensthein(this.itemLabel, i2.itemLabel);
-		float descrSim= this.levensthein(descr1, descr2);
+		float nameSim = Measures.levenshtein(this.itemLabel, i2.itemLabel);
+		float descrSim= Measures.levenshtein(descr1, descr2);
 		return (nameSim +descrSim)/2f;
 	}
 	
 	
 	
 	
-	private float levensthein (String s1,String s2){
-		int matrix[][] = new int[s1.length() + 1][s2.length() + 1];
-	    for (int i = 0; i < s1.length() + 1; i++) {
-	      matrix[i][0] = i;
-	    }
-	    for (int i = 0; i < s2.length() + 1; i++) {
-	      matrix[0][i] = i;
-	    }
-	    for (int a = 1; a < s1.length() + 1; a++) {
-	      for (int b = 1; b < s2.length() + 1; b++) {
-	        int right = 0;
-	        if (s1.charAt(a - 1) != s2.charAt(b - 1)) {
-	          right = 1;
-	        }
-	        int mini = matrix[a - 1][b] + 1;
-	        if (matrix[a][b - 1] + 1 < mini) {
-	          mini = matrix[a][b - 1] + 1;
-	        }
-	        if (matrix[a - 1][b - 1] + right < mini) {
-	          mini = matrix[a - 1][b - 1] + right;
-	        }
-	        matrix[a][b] = mini;
-	        
-	      }
-	    }
-	    return 1-(float)(matrix[s1.length()][s2.length()])/(float)Math.max(s1.length(), s2.length());
-	}
+	
 	
 	
 	
@@ -147,7 +122,7 @@ public class Item implements Comparable{
 	}
 	public static void main (String[] arg){
 		Item i = new Item();
-		System.out.print(i.levensthein("ME_CRP_U", "ME_CRP_U_2"));
+		System.out.print(Measures.levenshtein("ME_CRP_U", "ME_CRP_U_2"));
 	}
 
 

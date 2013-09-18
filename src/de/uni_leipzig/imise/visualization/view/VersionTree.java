@@ -1,6 +1,7 @@
 package de.uni_leipzig.imise.visualization.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -75,6 +76,7 @@ public class VersionTree extends JTree{
 	}
 	
 	
+	
 	public void loadVersion(CRFVersion v){
 		this.version = v.getVersion();
 		this.root.setUserObject(v.getName()+v.getVersion());
@@ -82,7 +84,7 @@ public class VersionTree extends JTree{
 		itemList.addAll(v.getItems().values());
 		Collections.sort(itemList);
 		for (Item i:itemList){
-			DefaultMutableTreeNode in = new DefaultMutableTreeNode(i.getItemLabel());
+			CategoryNode in = new CategoryNode(i.getItemLabel());
 			this.itemNodeMap.put(i.getItemLabel(), in);
 			this.root.add(in);	
 			
@@ -123,6 +125,35 @@ public class VersionTree extends JTree{
 			tableModel.setValueAt(modItem, r, 1);
 			tableModel.setValueAt(type, r, 2);
 		}
+	}
+	
+	
+	public void updateCategory (HashMap<String,List<String>>categories, boolean isAdded,String cat){
+		List <String> itemLabels = categories.get(cat);
+		if (itemLabels!= null){
+			for (String iLab: itemLabels){
+				CategoryNode cn = (CategoryNode) itemNodeMap.get(iLab);
+				if (isAdded){
+					cn.color = Color.ORANGE;
+				}else {
+					cn.color =null;
+				}
+			}
+		}
+	}
+	public void updateCategoryColors(HashMap<String,List<String>>categories,
+			String[] defaultCats){
+			for (String cat: defaultCats){
+				if (categories.containsKey(cat)){
+					List<String> items = categories.get(cat);
+					for (String iLabel: items){
+						CategoryNode cn = (CategoryNode) itemNodeMap.get(iLabel);
+						cn.category = cat;
+						Color c = Color.ORANGE;
+						cn.color = c;
+					}
+				}
+			}
 		
 	}
 	
@@ -135,11 +166,13 @@ public class VersionTree extends JTree{
 		this.itemNodeMap.clear();
 	}
 	
-	public void releaseVersionTree(){
-		
+	private class CategoryNode extends DefaultMutableTreeNode {
+		private Color color ;
+		private String category; 
+		private CategoryNode(Object userObject){
+			super(userObject);
+		}
 	}
-	
-	
 	
 	private class TableNodeRenderer extends JPanel implements TreeCellRenderer{
 
@@ -167,7 +200,22 @@ public class VersionTree extends JTree{
 				boolean hasFocus) {
 			
 			DefaultMutableTreeNode n = (DefaultMutableTreeNode) value;
-			if (n.getUserObject() instanceof CRFTableModel){
+			if (n instanceof CategoryNode){
+				CategoryNode cn = (CategoryNode) n;
+				if (cn.color!=null){
+					log.info("coloring");
+					dr.setBackground(cn.color);
+					dr.setOpaque(true);
+				}else{
+					dr.setOpaque(false);
+				}
+				
+				Component c= dr.getTreeCellRendererComponent(tree, value, 
+						selected, expanded, leaf, row, hasFocus);
+				
+				return c;
+				
+			}else if (n.getUserObject() instanceof CRFTableModel){
 				CRFTableModel dtm =(CRFTableModel) n.getUserObject();
 				dt.setModel(dtm);
 				dt.getColumn(CellConstants.ITEM_COL).setPreferredWidth(150);

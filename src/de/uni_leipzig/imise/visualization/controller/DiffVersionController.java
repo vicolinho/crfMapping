@@ -7,6 +7,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
@@ -79,6 +80,11 @@ public class DiffVersionController implements ActionListener, ListSelectionListe
 			}else {
 				JOptionPane.showConfirmDialog(null, "Sie müssen eine Menge von CRF Versionen vorab laden", "Keine Versionen", JOptionPane.WARNING_MESSAGE);
 			}
+		}else if (e.getSource() instanceof JCheckBoxMenuItem){
+			 JCheckBoxMenuItem check = (JCheckBoxMenuItem) e.getSource();
+			String cat = e.getActionCommand();
+			
+			dvp.updateColorTree(cat,check.isSelected());
 		}
 		
 	}

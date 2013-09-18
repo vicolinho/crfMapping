@@ -10,9 +10,13 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.TitledBorder;
@@ -21,11 +25,11 @@ import de.uni_leipzig.imise.data.CRFVersion;
 import de.uni_leipzig.imise.data.DiffVersion;
 import de.uni_leipzig.imise.data.Item;
 import de.uni_leipzig.imise.data.VersionPair;
+import de.uni_leipzig.imise.data.constants.CategoryConstants;
 import de.uni_leipzig.imise.data.managment.DiffVersionManager;
 import de.uni_leipzig.imise.data.managment.VersionManager;
 import de.uni_leipzig.imise.visualization.controller.DiffTreeController;
 import de.uni_leipzig.imise.visualization.controller.DiffVersionController;
-import javax.swing.JSplitPane;
 
 public final class DiffPanel extends JPanel implements PropertyChangeListener{
 	
@@ -41,6 +45,9 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 	private JPanel deletedPanel;
 	private CRFTableModel deletedItemModel;
 	private JTable deletedTable;
+	private JMenu mnNewMenu;
+
+	private JMenuBar menuBar;
 	public DiffPanel(DiffTreeController dtc) {
 		super();
 		this.vm = VersionManager.getInstance();
@@ -62,6 +69,14 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 		btnDiffCalc.addActionListener(dvc);
 		calcPanel.add(btnDiffCalc);
 		this.add(calcPanel, BorderLayout.NORTH);
+		
+		menuBar = new JMenuBar();
+		calcPanel.add(menuBar);
+		
+		mnNewMenu = new JMenu("category selection");
+		menuBar.add(mnNewMenu);
+		this.initCategoryItems();
+		
 		TitledBorder tb =new TitledBorder("diff-tree");
 		
 		splitPane = new JSplitPane();
@@ -94,6 +109,26 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 	
 	
 	
+	private void initCategoryItems() {
+		for (String cat : CategoryConstants.DEFAULT_CATS){
+			JCheckBoxMenuItem cbi = new JCheckBoxMenuItem(cat);
+			cbi.setActionCommand(cat);
+			cbi.setSelected(true);
+			cbi.addActionListener(dvc);
+			this.mnNewMenu.add(cbi);
+			
+			
+		}
+		
+	}
+	
+	public void  updateColorTree(String cat,boolean isSelected){
+		if (!dvm.isEmpty()){
+			diffTree.updateCategory(dvm.getCategoryItemMap(), isSelected, cat);
+			diffTree.updateUI();
+		}
+	}
+
 	public void updateDiffTree() {
 		Integer beforeKey = vm.getVersions().lastKey();
 		CRFVersion lastVersion=vm.getVersions().get(beforeKey);
@@ -101,6 +136,9 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 		dtc.setVersion(beforeKey);
 		HashMap<String,List<String>> changeGraph = dvm.getChangeGraph();
 		HashMap<Item,List<VersionPair>> itemChangedPerVersion = dvm.getDiffVersionsPerItem(lastVersion);
+		diffTree.updateCategoryColors(dvm.getCategoryItemMap(),
+				CategoryConstants.DEFAULT_CATS);
+		
 		for (Entry<Item,List<VersionPair>> e: itemChangedPerVersion.entrySet()){
 			List<VersionPair> diffVersions = e.getValue();
 			Item i = e.getKey();
@@ -118,6 +156,9 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 				}
 			}
 		}
+	
+		
+		
 		diffTree.updateUI();
 	}
 	
