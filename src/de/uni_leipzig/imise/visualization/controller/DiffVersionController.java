@@ -84,7 +84,7 @@ public class DiffVersionController implements ActionListener, ListSelectionListe
 			 JCheckBoxMenuItem check = (JCheckBoxMenuItem) e.getSource();
 			String cat = e.getActionCommand();
 			
-			dvp.updateColorTree(cat,check.isSelected());
+			dvp.updateColorTree();
 		}
 		
 	}

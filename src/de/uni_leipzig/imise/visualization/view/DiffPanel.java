@@ -126,11 +126,19 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 		
 	}
 	
-	public void  updateColorTree(String cat,boolean isSelected){
+	public void  updateColorTree(){
+		List<String> selCats = new ArrayList <String>();
 		if (!dvm.isEmpty()){
-			diffTree.updateCategory(dvm.getCategoryItemMap(), isSelected, cat);
-			diffTree.updateUI();
+			for (JCheckBoxMenuItem bi :this.catItems){
+				if (bi.isSelected()){
+					selCats.add(bi.getActionCommand());
+				}
+			}
+			this.diffTree.updateCategoryColors(
+					dvm.getCategoryItemMap(), selCats.toArray(new String[]{}));
+			this.diffTree.updateUI();
 		}
+		
 	}
 
 	public void updateDiffTree() {
@@ -160,9 +168,6 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 				}
 			}
 		}
-	
-		
-		
 		diffTree.updateUI();
 	}
 	

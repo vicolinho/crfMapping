@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EventObject;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import javax.swing.JFrame;
@@ -143,18 +145,21 @@ public class VersionTree extends JTree{
 	}
 	public void updateCategoryColors(HashMap<String,List<String>>categories,
 			String[] defaultCats){
-			for (String cat: defaultCats){
-				if (categories.containsKey(cat)){
-					List<String> items = categories.get(cat);
-					for (String iLabel: items){
-						CategoryNode cn = (CategoryNode) itemNodeMap.get(iLabel);
-						cn.category = cat;
-						Color c = Color.ORANGE;
-						cn.color = c;
-					}
+		HashSet<String> catSet = new HashSet<String> ();
+		Collections.addAll(catSet, defaultCats);
+		for (Entry<String,List<String>> e:categories.entrySet()){
+			
+			for (String iLabel: e.getValue()){
+				CategoryNode cn = (CategoryNode) itemNodeMap.get(iLabel);
+				if (catSet.contains(e.getKey())){
+					cn.category = e.getKey();
+					Color c = Color.ORANGE;
+					cn.color = c;
+				}else{
+					cn.color = null;
 				}
 			}
-		
+		}
 	}
 	
 	public void release(){

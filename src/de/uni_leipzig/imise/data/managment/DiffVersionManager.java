@@ -112,9 +112,6 @@ public class DiffVersionManager {
 				nextKey = this.versionDiffMap.lowerKey(nextKey); //next previous version comparison
 			}
 		}//each item of the chosen version
-		for (Entry<String,List<String>>e:categoryItemMap.entrySet()){
-			log.info(e.toString());
-		}
 		return itemVersionMap;
 	}
 	
