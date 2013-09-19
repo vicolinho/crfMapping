@@ -89,7 +89,6 @@ public class DiffTable extends JTable {
 			String prop =(String) table.getValueAt(
 					row,table.getColumnModel().getColumnIndex(CellConstants.PROPERTY_COL));
 			String valueString = value.toString();
-			log.info(prop+" - "+selColName+":"+valueString);
 			String [] valueArray = valueString.split(",");
 			StringBuffer sb = new StringBuffer("<html><body>");
 			
