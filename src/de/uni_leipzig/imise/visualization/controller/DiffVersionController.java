@@ -81,9 +81,6 @@ public class DiffVersionController implements ActionListener, ListSelectionListe
 				JOptionPane.showConfirmDialog(null, "Sie müssen eine Menge von CRF Versionen vorab laden", "Keine Versionen", JOptionPane.WARNING_MESSAGE);
 			}
 		}else if (e.getSource() instanceof JCheckBoxMenuItem){
-			 JCheckBoxMenuItem check = (JCheckBoxMenuItem) e.getSource();
-			String cat = e.getActionCommand();
-			
 			dvp.updateColorTree();
 		}
 		

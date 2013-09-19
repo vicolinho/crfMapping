@@ -89,6 +89,7 @@ public class DiffTable extends JTable {
 			String prop =(String) table.getValueAt(
 					row,table.getColumnModel().getColumnIndex(CellConstants.PROPERTY_COL));
 			String valueString = value.toString();
+			log.info(prop+" - "+selColName+":"+valueString);
 			String [] valueArray = valueString.split(",");
 			StringBuffer sb = new StringBuffer("<html><body>");
 			
@@ -109,10 +110,10 @@ public class DiffTable extends JTable {
 						for (String v: otherArray) newSet.add(v);
 						for (int i = 0; i< valueArray.length;i++){
 							String v = valueArray[i];
-							if (newSet.contains(v)){
-								sb.append(v);
-							}else{
+							if (!newSet.contains(v)){
 								sb.append("<b>"+v+"</b>");
+							}else{
+								sb.append(v);
 							}
 							if (i!= valueArray.length-1){
 								sb.append("<br/>");
@@ -120,7 +121,10 @@ public class DiffTable extends JTable {
 						}
 						sb.append("</body></html>");
 						lab.setText(sb.toString());
-						table.setRowHeight(row, (int) lab.getPreferredSize().getHeight());
+						int rowHeight = table.getRowHeight(row);
+						rowHeight = (int) ((rowHeight>(int)lab.getPreferredSize().getHeight())
+								?rowHeight:lab.getPreferredSize().getHeight());
+						table.setRowHeight(row, rowHeight);
 						return lab;
 					}else{
 						return dtcr.getTableCellRendererComponent(
