@@ -106,9 +106,9 @@ public class DiffTable extends JTable {
 						String[] otherArray= otherValue.split(",");
 						
 						HashSet<String> newSet = new HashSet<String> ();
-						for (String v: otherArray) newSet.add(v);
+						for (String v: otherArray) newSet.add(v.trim());
 						for (int i = 0; i< valueArray.length;i++){
-							String v = valueArray[i];
+							String v = valueArray[i].trim();
 							if (!newSet.contains(v)){
 								sb.append("<b>"+v+"</b>");
 							}else{
