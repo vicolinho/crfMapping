@@ -46,6 +46,7 @@ public class MainFrame extends JFrame{
 		
 		JSplitPane splitPane = new JSplitPane();
 		splitPane.setResizeWeight(0.3);
+		splitPane.setOneTouchExpandable(true);
 		getContentPane().add(splitPane, BorderLayout.CENTER);
 		
 		vp = new VersionPanel();
@@ -57,6 +58,7 @@ public class MainFrame extends JFrame{
 		
 		diffPanel = new DiffPanel(dtc);
 		splitPane_1.setResizeWeight(0.6);
+		splitPane_1.setOneTouchExpandable(true);
 		splitPane_1.setLeftComponent(diffPanel);
 		
 		JTabbedPane itemTab = new JTabbedPane ();

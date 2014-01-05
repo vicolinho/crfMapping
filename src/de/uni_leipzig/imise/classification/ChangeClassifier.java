@@ -73,7 +73,7 @@ public class ChangeClassifier {
 					if (sim<SMALL_THRESH){
 						cat = CategoryConstants.EDIT;
 						e2.getValue().setRelevance(cat);
-						log.debug(newValue+"-"+oldValue+" similarity:"+sim);
+					
 						continue;
 					}
 				}

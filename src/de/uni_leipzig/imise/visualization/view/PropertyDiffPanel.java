@@ -36,7 +36,7 @@ public class PropertyDiffPanel extends JPanel implements PropertyChangeListener 
 	}
 	private void  initGui(){
 		propertyModel = new CRFTableModel(CellConstants.PROPERTY_COL,CellConstants.OLD_VALUE,
-				CellConstants.NEW_VALUE,CellConstants.RELEVANCE);
+				CellConstants.NEW_VALUE,CellConstants.CATEGORY);
 		table = new DiffTable(propertyModel);
 		JScrollPane view = new JScrollPane(table);
 		this.add(view,BorderLayout.CENTER);
@@ -61,7 +61,7 @@ public class PropertyDiffPanel extends JPanel implements PropertyChangeListener 
 						propertyModel.setValueAt(e.getKey(), r, CellConstants.PROPERTY_COL);
 						propertyModel.setValueAt(e.getValue().getOldValue(), r, CellConstants.OLD_VALUE);
 						propertyModel.setValueAt(e.getValue().getNewValue(), r, CellConstants.NEW_VALUE);
-						propertyModel.setValueAt(e.getValue().getRelevance(), r, CellConstants.RELEVANCE);
+						propertyModel.setValueAt(e.getValue().getRelevance(), r, CellConstants.CATEGORY);
 					}//for each property map
 				} //higher key is not null
 			}//map size >0

@@ -53,8 +53,6 @@ public class CRFTableModel extends  AbstractTableModel {
 
 	    @SuppressWarnings("unchecked")
 		public Class getColumnClass(int c) {
-	    	log.info(c);
-	    	log.info(this);
 	        return getValueAt(0, c).getClass();
 	    }
 	    

@@ -12,5 +12,5 @@ public class CellConstants {
 	public static final String VALUE ="value";
 	public static final String OLD_VALUE ="old value";
 	public static final String NEW_VALUE ="new value";
-	public static final String RELEVANCE = "relevance";
+	public static final String CATEGORY = "change category";
 }
