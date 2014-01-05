@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Logger;
+
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -15,6 +15,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
+
+import org.apache.log4j.Logger;
 
 import de.uni_leipzig.imise.data.CRFVersion;
 import de.uni_leipzig.imise.data.managment.VersionManager;
@@ -26,7 +28,7 @@ public final class CRFMenuBar extends JMenuBar {
 	
 	private VersionReader vr ;
 	private VersionManager vm ;
-	static final Logger log = Logger.getLogger(CRFMenuBar.class.getName());
+	static final Logger log = Logger.getLogger(CRFMenuBar.class);
 	public CRFMenuBar(){
 		vm = VersionManager.getInstance();
 		vr = new VersionReader();

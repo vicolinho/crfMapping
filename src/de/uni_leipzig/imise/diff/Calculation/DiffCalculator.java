@@ -1,30 +1,24 @@
 package de.uni_leipzig.imise.diff.calculation;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 
 import de.uni_leipzig.imise.data.CRFVersion;
 import de.uni_leipzig.imise.data.Item;
-import de.uni_leipzig.imise.data.ItemMapping;
 import de.uni_leipzig.imise.data.PropertyMapping;
 import de.uni_leipzig.imise.data.Section;
 import de.uni_leipzig.imise.data.SectionMapping;
@@ -32,7 +26,7 @@ import de.uni_leipzig.imise.io.VersionReader;
 
 public class DiffCalculator {
 
-	private static final Logger log = Logger.getLogger(DiffCalculator.class.getName());
+	private static final Logger log = Logger.getLogger(DiffCalculator.class);
 	private List<Item> addedItems;
 	
 	private List<Item> deletedItems;
@@ -59,7 +53,9 @@ public class DiffCalculator {
 	private HashMap<Item,Item> newOldItemMap;
 	
 	/**
-	 * map of modified old item as key and the property mapping
+	 * This map save the relation between the modified items and the changed properties.
+	 * The key of the map are the old item labels and the value is a map, which contains the property name
+	 * as key and the {@code PropertyMapping} as value.
 	 */
 	private HashMap<String, HashMap<String, PropertyMapping>> modifiedItems;
 	
@@ -83,31 +79,32 @@ public class DiffCalculator {
 		List <Item> newItems = new ArrayList<Item>();
 		
 		for (Item oldItem : deletedItems){
-			TreeMap<Float,ItemMapping> topMatches = new TreeMap<Float,ItemMapping>();
+			TreeMap<Float,Item> topMatches = new TreeMap<Float,Item>();
 			for (Item newItem: addedItems){
 				float sim = oldItem.match(newItem);
 				
 				if (sim>0.6f){// potential modified mapping
-					ItemMapping im = new ItemMapping(oldItem,newItem);
-					topMatches.put(sim, im);	
+					
+					topMatches.put(sim, newItem);	
 				}
 			}//each new item
 			if (!topMatches.isEmpty()){
-				ItemMapping im = topMatches.lastEntry().getValue();
-				//choose the best mapping
+				
+				Item newItem = topMatches.lastEntry().getValue();
+				//choose the best corresponded new Item
 				List<String> diffProperties=null;
-				diffProperties = oldItem.diff(im.getNewItem());
+				diffProperties = oldItem.diff(newItem);
 				HashMap<String, PropertyMapping> itemModifiedMap = new HashMap<String,PropertyMapping>();
 				//generate the property mapping with old and new value
 				for (String property : diffProperties){
 					PropertyMapping m = new PropertyMapping(oldItem.getProperties().get(property),
-							im.getNewItem().getProperties().get(property));
+							newItem.getProperties().get(property));
 					itemModifiedMap.put(property, m);
 				}
 				//delete the items from the set of added items and deleted items
-				oldItems.add(im.getOldItem());newItems.add(im.getNewItem());
-				this.oldNewItemMap.put(oldItem, im.getNewItem());
-				this.newOldItemMap.put(im.getNewItem(), oldItem);
+				oldItems.add(oldItem);newItems.add(newItem);
+				this.oldNewItemMap.put(oldItem, newItem);
+				this.newOldItemMap.put(newItem, oldItem);
 				this.modifiedItems.put(oldItem.getItemLabel(), itemModifiedMap);
 				
 			}
@@ -358,6 +355,7 @@ public class DiffCalculator {
 		
 	}
 	public static void main (String[] arg){
+		PropertyConfigurator.configure("log4j.properties");
 		VersionReader vr = new VersionReader();
 		CRFVersion v1,v2;
 		long start = System.currentTimeMillis();

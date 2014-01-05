@@ -9,11 +9,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -29,7 +31,7 @@ import de.uni_leipzig.imise.data.constants.SectionConstants;
 
 public class VersionReader {
 	
-	private static Logger log = Logger.getLogger(VersionReader.class.getName());
+	private static Logger log = Logger.getLogger(VersionReader.class);
 
 	private static final String CRF ="CRF";
 	
@@ -210,6 +212,7 @@ public class VersionReader {
 	
 	
 	public static void main(String[] args){
+		PropertyConfigurator.configure("log4j.properties");
 		VersionReader reader =new VersionReader();
 		for (String f :args){
 			

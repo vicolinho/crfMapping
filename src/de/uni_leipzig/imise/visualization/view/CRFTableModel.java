@@ -1,9 +1,11 @@
 package de.uni_leipzig.imise.visualization.view;
 
 import java.util.HashMap;
-import java.util.logging.Logger;
+
 
 import javax.swing.table.AbstractTableModel;
+
+import org.apache.log4j.Logger;
 
 
 
@@ -14,7 +16,7 @@ public class CRFTableModel extends  AbstractTableModel {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger log = Logger.getLogger(CRFTableModel.class.getName());
+	private static final Logger log = Logger.getLogger(CRFTableModel.class);
 	
 	 private String[] columnNames;
 	 private HashMap<String,Integer> revColumnName;
@@ -51,6 +53,8 @@ public class CRFTableModel extends  AbstractTableModel {
 
 	    @SuppressWarnings("unchecked")
 		public Class getColumnClass(int c) {
+	    	log.info(c);
+	    	log.info(this);
 	        return getValueAt(0, c).getClass();
 	    }
 	    

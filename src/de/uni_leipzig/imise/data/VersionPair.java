@@ -3,52 +3,52 @@ package de.uni_leipzig.imise.data;
 public class VersionPair implements Comparable{
 
 	
-	private int v1;
+	private int oldVersion;
 	
 	
 
-	private int v2;
+	private int newVersion;
 
 	
 	
 	public VersionPair (int v1,int v2){
-		this.v1 =v1;
-		this.v2 = v2;
+		this.oldVersion =v1;
+		this.newVersion = v2;
 	}
 	/**
 	 * @return the v1
 	 */
-	public int getV1() {
-		return v1;
+	public int getOldVersion() {
+		return oldVersion;
 	}
 
 	/**
 	 * @param v1 the v1 to set
 	 */
-	public void setV1(int v1) {
-		this.v1 = v1;
+	public void setOldVersion(int v1) {
+		this.oldVersion = v1;
 	}
 
 	/**
 	 * @return the v2
 	 */
-	public int getV2() {
-		return v2;
+	public int getNewVersion() {
+		return newVersion;
 	}
 
 	/**
 	 * @param v2 the v2 to set
 	 */
-	public void setV2(int v2) {
-		this.v2 = v2;
+	public void setNewVersion(int v2) {
+		this.newVersion = v2;
 	}
 	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + v1;
-		result = prime * result + v2;
+		result = prime * result + oldVersion;
+		result = prime * result + newVersion;
 		return result;
 	}
 
@@ -61,9 +61,9 @@ public class VersionPair implements Comparable{
 		if (getClass() != obj.getClass())
 			return false;
 		VersionPair other = (VersionPair) obj;
-		if (v1 != other.v1)
+		if (oldVersion != other.oldVersion)
 			return false;
-		if (v2 != other.v2)
+		if (newVersion != other.newVersion)
 			return false;
 		return true;
 	}

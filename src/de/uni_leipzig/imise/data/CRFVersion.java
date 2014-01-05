@@ -2,11 +2,19 @@ package de.uni_leipzig.imise.data;
 
 import java.util.Map;
 
+/**
+ * This class holds the items, sections and groups objects of an CRF sheet. 
+ * It's identifiable with the name and version number.
+ * @author loco
+ *
+ */
 public class CRFVersion {
 
 	private int version;
 	
 	private String name;
+	
+	
 	private Map<String,Group> groups;
 	
 	private Map<String,Section> sections;

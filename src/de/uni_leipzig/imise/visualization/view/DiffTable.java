@@ -2,7 +2,7 @@ package de.uni_leipzig.imise.visualization.view;
 
 import java.awt.Component;
 import java.util.HashSet;
-import java.util.logging.Logger;
+
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -16,10 +16,12 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import org.apache.log4j.Logger;
+
 public class DiffTable extends JTable {
 
 	
-	private static final Logger log = Logger.getLogger(DiffTable.class.getName());
+	private static final Logger log = Logger.getLogger(DiffTable.class);
 	/**
 	 * 
 	 */

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
+
 
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -22,6 +22,8 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.TitledBorder;
 
+import org.apache.log4j.Logger;
+
 import de.uni_leipzig.imise.data.CRFVersion;
 import de.uni_leipzig.imise.data.DiffVersion;
 import de.uni_leipzig.imise.data.Item;
@@ -34,7 +36,7 @@ import de.uni_leipzig.imise.visualization.controller.DiffVersionController;
 
 public final class DiffPanel extends JPanel implements PropertyChangeListener{
 	
-	private static final Logger log = Logger.getLogger(DiffPanel.class.getName());
+	private static final Logger log = Logger.getLogger(DiffPanel.class);
 	private VersionManager vm ;
 	private DiffVersionManager dvm;
 	private DiffVersionController dvc;
@@ -159,12 +161,12 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 				VersionPair vp = diffVersions.get(ver);
 				String itemLabel = items.get(ver);
 				DiffVersion dv = dvm.getDiffVersionMap().get(vp);
-				CRFVersion v = vm.getVersions().get(vp.getV1());
+				CRFVersion v = vm.getVersions().get(vp.getOldVersion());
 				Item oldItem = v.getItems().get(itemLabel);
 				if(!dv.getOldNewItemMap().containsKey(oldItem)){
-					diffTree.addDiffForItem(itemLabel, CellConstants.ADD_TYPE, vp.getV1(), vp.getV2(), itemLabel);
+					diffTree.addDiffForItem(itemLabel, CellConstants.ADD_TYPE, vp.getOldVersion(), vp.getNewVersion(), itemLabel);
 				}else{	
-					diffTree.addDiffForItem(e.getKey().getItemLabel(), CellConstants.MOD_TYPE, vp.getV1(), vp.getV2(), itemLabel);
+					diffTree.addDiffForItem(e.getKey().getItemLabel(), CellConstants.MOD_TYPE, vp.getOldVersion(), vp.getNewVersion(), itemLabel);
 				}
 			}
 		}
@@ -180,7 +182,7 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 			List<Item> delItems = dv.getDeletedItems();
 			for (Item di : delItems){
 				int r = this.deletedItemModel.addRow();
-				this.deletedItemModel.setValueAt(beforeKey.getV1(), r, CellConstants.VERSION_COL);
+				this.deletedItemModel.setValueAt(beforeKey.getOldVersion(), r, CellConstants.VERSION_COL);
 				this.deletedItemModel.setValueAt(di.getItemLabel(), r, CellConstants.ITEM_COL);
 			}
 			

@@ -3,19 +3,47 @@ package de.uni_leipzig.imise.data;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * This class holds the changed/unchanged objects of two versions
+ * @author loco
+ *
+ */
 
 public class DiffVersion {
 
+	/**
+	 * unchanged items
+	 */
 	private List<Item> equalItems;
 	
+	/**
+	 * added items
+	 */
 	private List<Item> addedItems;
 	
+	/**
+	 * deleted item
+	 */
 	private List<Item> deletedItems;
 	
+	/**
+	 * map, which holds the mappings of modified items.
+	 * It maps a old item to a new item
+	 */
 	private HashMap<Item,Item> oldNewItemMap;
 	
+	/**
+	 * map, which holds the mappings of modified items.
+	 * It maps a new item to a old item
+	 */
 	private HashMap<Item,Item> newOldItemMap;
 	
+	
+	/**
+	 * This map save the relation between the modified items and the changed properties.
+	 * The key of the map are the old item labels and the value is a map, which contains the property name
+	 * as key and the {@code PropertyMapping} as value.
+	 */
 	private HashMap<String,HashMap<String,PropertyMapping>> modifiedItems;
 	
 	

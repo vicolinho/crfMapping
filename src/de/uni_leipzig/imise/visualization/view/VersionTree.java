@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
+
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -28,6 +28,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreeCellRenderer;
 
+import org.apache.log4j.Logger;
+
 import de.uni_leipzig.imise.data.CRFVersion;
 import de.uni_leipzig.imise.data.Item;
 import de.uni_leipzig.imise.visualization.controller.DiffTreeController;
@@ -38,7 +40,7 @@ public class VersionTree extends JTree{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static final Logger log = Logger.getLogger(VersionTree.class.getName());
+	private static final Logger log = Logger.getLogger(VersionTree.class);
 	private DefaultTreeModel model;
 	
 	private DefaultMutableTreeNode root;

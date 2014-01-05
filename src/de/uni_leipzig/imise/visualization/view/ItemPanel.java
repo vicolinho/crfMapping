@@ -4,13 +4,13 @@ import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.logging.Logger;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.TitledBorder;
+
+import org.apache.log4j.Logger;
 
 import de.uni_leipzig.imise.data.CRFVersion;
 import de.uni_leipzig.imise.data.Item;
@@ -20,7 +20,7 @@ import de.uni_leipzig.imise.data.managment.VersionManager;
 public class ItemPanel extends JPanel implements PropertyChangeListener{
 
 	
-	private static final Logger log = Logger.getLogger(ItemPanel.class.getName());
+	private static final Logger log = Logger.getLogger(ItemPanel.class);
 	private CRFTableModel itemTableModel ;
 	
 	private JTable table;

@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
+
 
 import de.uni_leipzig.imise.data.CRFVersion;
 import de.uni_leipzig.imise.data.DiffVersion;
@@ -13,11 +15,23 @@ import de.uni_leipzig.imise.data.Item;
 import de.uni_leipzig.imise.data.PropertyMapping;
 import de.uni_leipzig.imise.data.VersionPair;
 
+
 public class DiffVersionManager {
-	private static final Logger log = Logger.getLogger(DiffVersionManager.class.getName());
+	private static final Logger log = Logger.getLogger(DiffVersionManager.class);
+	
+	/**
+	 * holds the Diff for two versions
+	 */
 	private TreeMap<VersionPair,DiffVersion> versionDiffMap;
+	/**
+	 * save the previous item for each item
+	 */
 	private HashMap<String,List<String>> changeGraph;
 	private static DiffVersionManager instance;
+	
+	/**
+	 * 
+	 */
 	private HashMap<String,List<String>> categoryItemMap;
 	private DiffVersionManager (){
 		versionDiffMap = new TreeMap<VersionPair,DiffVersion>();
@@ -41,13 +55,18 @@ public class DiffVersionManager {
 		this.categoryItemMap.clear();
 	}
 	
+	/**
+	 * retrieve for the current version v for each item the version pair, where it changed.
+	 * @param v
+	 * @return
+	 */
 	public HashMap<Item,List<VersionPair>> getDiffVersionsPerItem(CRFVersion v){
 		HashMap<Item,List<VersionPair>> itemVersionMap = new HashMap<Item,List<VersionPair>>();
 		changeGraph.clear();
 		this.categoryItemMap.clear();
 		VersionPair startKey = null ;
 		for (VersionPair vp : this.versionDiffMap.keySet()){
-			if (vp.getV2()==v.getVersion()){
+			if (vp.getNewVersion()==v.getVersion()){
 				startKey = vp;
 				break;
 			}

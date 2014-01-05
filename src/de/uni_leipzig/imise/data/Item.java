@@ -9,12 +9,21 @@ import java.util.Map.Entry;
 import de.uni_leipzig.imise.data.constants.ItemConstants;
 import de.uni_leipzig.imise.diff.calculation.Measures;
 
+
+/**
+ * class which represents a item
+ * @author loco
+ *
+ */
 public class Item implements Comparable{
 
 	private int position;
 	
 	private String itemLabel;
 	
+	/**
+	 * key is the name of the property, value is the value of the property
+	 */
 	private Map<String,Object> properties;
 	
 	

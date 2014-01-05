@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.logging.Logger;
+
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -26,10 +26,12 @@ import javax.swing.JButton;
 import javax.swing.JInternalFrame;
 import javax.swing.JScrollPane;
 
+import org.apache.log4j.Logger;
+
 public final class VersionPanel extends JPanel implements PropertyChangeListener{
 	
 	
-	private static final Logger log = Logger.getLogger(VersionPanel.class.getName());
+	private static final Logger log = Logger.getLogger(VersionPanel.class);
 	public static final String ADD_VERSION_TREE = "addVersionTree";
 	private static final long serialVersionUID = 1L;
 

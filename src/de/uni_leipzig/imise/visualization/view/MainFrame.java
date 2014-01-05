@@ -1,23 +1,15 @@
 package de.uni_leipzig.imise.visualization.view;
 
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.JFrame;
 import javax.swing.JSplitPane;
-import javax.swing.JButton;
 import javax.swing.JTabbedPane;
 
+import org.apache.log4j.PropertyConfigurator;
+
 import de.uni_leipzig.imise.visualization.controller.DiffTreeController;
-import de.uni_leipzig.imise.visualization.controller.DiffVersionController;
 
 
 public class MainFrame extends JFrame{
@@ -86,6 +78,7 @@ public class MainFrame extends JFrame{
 	}
 	
 	public static void main (String[] args){
+		PropertyConfigurator.configure("log4j.properties");
 		MainFrame f = new MainFrame();
 		
 	}
