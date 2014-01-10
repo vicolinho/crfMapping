@@ -57,27 +57,38 @@ public class DiffVersionManager {
 	
 	/**
 	 * retrieve for the current version v for each item the version pair, where it changed.
-	 * @param v
+	 * @param lastVersion
 	 * @return
 	 */
-	public HashMap<Item,List<VersionPair>> getDiffVersionsPerItem(CRFVersion v){
+	public HashMap<Item,List<VersionPair>> getDiffVersionsPerItem(CRFVersion firstVersion,CRFVersion lastVersion){
 		HashMap<Item,List<VersionPair>> itemVersionMap = new HashMap<Item,List<VersionPair>>();
 		changeGraph.clear();
 		this.categoryItemMap.clear();
 		VersionPair startKey = null ;
+		VersionPair endKey =null;
 		for (VersionPair vp : this.versionDiffMap.keySet()){
-			if (vp.getNewVersion()==v.getVersion()){
+			if (vp.getNewVersion()==lastVersion.getVersion()){
 				startKey = vp;
 				break;
 			}
 		}
+		for (VersionPair vp : this.versionDiffMap.keySet()){
+			if (vp.getOldVersion() == firstVersion.getVersion()){
+				endKey = vp;
+				break;
+			}
+		}
 		VersionPair nextKey = startKey;
-		for (Entry<String,Item> e :v.getItems().entrySet()){
+		boolean isFirst;
+		for (Entry<String,Item> e :lastVersion.getItems().entrySet()){
 			Item currentItem = e.getValue();
 			DiffVersion dv;
 			nextKey = startKey;
-			
-			while (nextKey!=null){
+			isFirst =true;
+			do{
+				if (!isFirst){
+					nextKey = this.versionDiffMap.lowerKey(nextKey); //next previous version comparison
+				}else isFirst=false;
 				dv = this.versionDiffMap.get(nextKey);
 				if (dv.getNewOldItemMap().containsKey(currentItem)){
 					List<VersionPair> list = itemVersionMap.get(e.getValue());
@@ -128,9 +139,10 @@ public class DiffVersionManager {
 					break;
 				} //is added item
 				
-				nextKey = this.versionDiffMap.lowerKey(nextKey); //next previous version comparison
-			}
+				
+			}while (!nextKey.equals(endKey));
 		}//each item of the chosen version
+		log.info("calculate item Map for visualization");
 		return itemVersionMap;
 	}
 	

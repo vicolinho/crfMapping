@@ -10,4 +10,5 @@ public class EventConstants {
 	 * diff calculate action name
 	 */
 	public static final String DIFF_CALC = "diffCalcAction"; 
+	public static final String SHOW = "show";
 }

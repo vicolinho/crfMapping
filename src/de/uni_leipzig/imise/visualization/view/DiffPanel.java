@@ -10,17 +10,21 @@ import java.util.List;
 import java.util.Map.Entry;
 
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
 import org.apache.log4j.Logger;
 
@@ -33,10 +37,18 @@ import de.uni_leipzig.imise.data.managment.DiffVersionManager;
 import de.uni_leipzig.imise.data.managment.VersionManager;
 import de.uni_leipzig.imise.visualization.controller.DiffTreeController;
 import de.uni_leipzig.imise.visualization.controller.DiffVersionController;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 
 public final class DiffPanel extends JPanel implements PropertyChangeListener{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static final Logger log = Logger.getLogger(DiffPanel.class);
+	
+	
 	private VersionManager vm ;
 	private DiffVersionManager dvm;
 	private DiffVersionController dvc;
@@ -52,6 +64,13 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 	private List <JCheckBoxMenuItem> catItems;
 
 	private JMenuBar menuBar;
+	private JComboBox<Integer> fromBox;
+	private JComboBox<Integer> toBox;
+	private JButton btnShow;
+	private DefaultComboBoxModel<Integer> fromModel;
+	private DefaultComboBoxModel<Integer> toModel;
+	private JLabel lblFrom;
+	private JLabel lblTo;
 	public DiffPanel(DiffTreeController dtc) {
 		super();
 		this.vm = VersionManager.getInstance();
@@ -74,6 +93,27 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 		btnDiffCalc.addActionListener(dvc);
 		calcPanel.add(btnDiffCalc);
 		this.add(calcPanel, BorderLayout.NORTH);
+		
+		fromBox = new JComboBox<Integer>();
+		fromModel = new DefaultComboBoxModel<Integer>();
+		
+		lblFrom = new JLabel("from");
+		calcPanel.add(lblFrom);
+		fromBox.setModel(fromModel);
+		calcPanel.add(fromBox);
+		
+		toBox = new JComboBox<Integer>();
+		toModel = new DefaultComboBoxModel <Integer>();
+		
+		lblTo = new JLabel("to");
+		calcPanel.add(lblTo);
+		toBox.setModel(toModel);
+		calcPanel.add(toBox);
+		
+		btnShow = new JButton("show");
+		btnShow.setActionCommand(EventConstants.SHOW);
+		btnShow.addActionListener(dvc);
+		calcPanel.add(btnShow);
 		
 		menuBar = new JMenuBar();
 		calcPanel.add(menuBar);
@@ -125,7 +165,25 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 			
 			
 		}
-		
+	}
+	
+	
+	/**
+	 * add the available versions as options for the combo boxes
+	 */
+	private void initVersions (){
+		for (Integer v : this.vm.getVersions().keySet()){
+			this.fromModel.addElement(v);
+			this.toModel.addElement(v);
+		}
+		this.fromBox.setSelectedIndex(0);
+		this.toBox.setSelectedIndex(toModel.getSize()-1);
+	}
+	
+	
+	private void clearVersionBoxes(){
+		this.fromModel.removeAllElements();
+		this.toModel.removeAllElements();
 	}
 	
 	public void  updateColorTree(){
@@ -144,56 +202,91 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 	}
 
 	public void updateDiffTree() {
-		Integer beforeKey = vm.getVersions().lastKey();
-		CRFVersion lastVersion=vm.getVersions().get(beforeKey);
-		diffTree.loadVersion(lastVersion);
-		dtc.setVersion(beforeKey);
-		HashMap<String,List<String>> changeGraph = dvm.getChangeGraph();
-		HashMap<Item,List<VersionPair>> itemChangedPerVersion = dvm.getDiffVersionsPerItem(lastVersion);
-		diffTree.updateCategoryColors(dvm.getCategoryItemMap(),
-				CategoryConstants.DEFAULT_CATS);
 		
-		for (Entry<Item,List<VersionPair>> e: itemChangedPerVersion.entrySet()){
-			List<VersionPair> diffVersions = e.getValue();
-			Item i = e.getKey();
-			List<String> items = changeGraph.get(i.getItemLabel());
-			for (int ver = 0;ver<diffVersions.size();ver++){
-				VersionPair vp = diffVersions.get(ver);
-				String itemLabel = items.get(ver);
-				DiffVersion dv = dvm.getDiffVersionMap().get(vp);
-				CRFVersion v = vm.getVersions().get(vp.getOldVersion());
-				Item oldItem = v.getItems().get(itemLabel);
-				if(!dv.getOldNewItemMap().containsKey(oldItem)){
-					diffTree.addDiffForItem(itemLabel, CellConstants.ADD_TYPE, vp.getOldVersion(), vp.getNewVersion(), itemLabel);
-				}else{	
-					diffTree.addDiffForItem(e.getKey().getItemLabel(), CellConstants.MOD_TYPE, vp.getOldVersion(), vp.getNewVersion(), itemLabel);
+		Integer lastKey = vm.getVersions().lastKey();
+		Integer firstKey = (Integer) this.fromBox.getSelectedItem();
+		if (firstKey<lastKey){
+			this.diffTree.release();
+			CRFVersion firstVersion = vm.getVersions().get(firstKey);
+			CRFVersion lastVersion=vm.getVersions().get(lastKey);
+			diffTree.loadVersion(lastVersion);
+			dtc.setVersion(lastKey);
+			HashMap<String,List<String>> changeGraph = dvm.getChangeGraph();
+			HashMap<Item,List<VersionPair>> itemChangedPerVersion = dvm.getDiffVersionsPerItem( firstVersion,lastVersion);
+			diffTree.updateCategoryColors(dvm.getCategoryItemMap(),
+					CategoryConstants.DEFAULT_CATS);
+			
+			for (Entry<Item,List<VersionPair>> e: itemChangedPerVersion.entrySet()){
+				List<VersionPair> diffVersions = e.getValue();
+				Item i = e.getKey();
+				List<String> items = changeGraph.get(i.getItemLabel());
+				for (int ver = 0;ver<diffVersions.size();ver++){
+					VersionPair vp = diffVersions.get(ver);
+					String itemLabel = items.get(ver);
+					DiffVersion dv = dvm.getDiffVersionMap().get(vp);
+					CRFVersion v = vm.getVersions().get(vp.getOldVersion());
+					Item oldItem = v.getItems().get(itemLabel);
+					if(!dv.getOldNewItemMap().containsKey(oldItem)){
+						diffTree.addDiffForItem(itemLabel, CellConstants.ADD_TYPE, vp.getOldVersion(), vp.getNewVersion(), itemLabel);
+					}else{	
+						diffTree.addDiffForItem(e.getKey().getItemLabel(), CellConstants.MOD_TYPE, vp.getOldVersion(), vp.getNewVersion(), itemLabel);
+					}
 				}
 			}
+			diffTree.updateUI();
+		}else {
+			JOptionPane.showConfirmDialog(null, "The first version might be smaller than the second version", "version error", JOptionPane.OK_OPTION,JOptionPane.WARNING_MESSAGE);
 		}
-		diffTree.updateUI();
+		
 	}
 	
 	public void updateDeletedTable(){
-		deletedItemModel.clear();
-		VersionPair beforeKey = dvm.getDiffVersionMap().lastKey();
 		
-		do{
-			DiffVersion dv = dvm.getDiffVersionMap().get(beforeKey);
-			List<Item> delItems = dv.getDeletedItems();
-			for (Item di : delItems){
-				int r = this.deletedItemModel.addRow();
-				this.deletedItemModel.setValueAt(beforeKey.getOldVersion(), r, CellConstants.VERSION_COL);
-				this.deletedItemModel.setValueAt(di.getItemLabel(), r, CellConstants.ITEM_COL);
+		Integer lastKey = (Integer) this.toBox.getSelectedItem();
+		Integer firstKey = (Integer) this.fromBox.getSelectedItem();
+		if (firstKey<lastKey){
+			deletedItemModel.clear();
+			VersionPair lastVersion = null;
+			VersionPair firstVersion = null;
+			for (VersionPair vp : dvm.getDiffVersionMap().keySet()){
+				if (vp.getNewVersion()==lastKey){
+					lastVersion = vp;
+					break;
+				}
 			}
 			
-			beforeKey = dvm.getDiffVersionMap().lowerKey(beforeKey);
-		}while (beforeKey !=null);
+			for (VersionPair vp : dvm.getDiffVersionMap().keySet()){
+				if (vp.getOldVersion()==firstKey){
+					firstVersion = vp;
+					break;
+				}
+			}
+			boolean isFirst =true;
+			
+			do{
+				if (!isFirst){
+					lastVersion = dvm.getDiffVersionMap().lowerKey(lastVersion);
+				}else isFirst = false;
+				DiffVersion dv = dvm.getDiffVersionMap().get(lastVersion);
+				List<Item> delItems = dv.getDeletedItems();
+				for (Item di : delItems){
+					int r = this.deletedItemModel.addRow();
+					this.deletedItemModel.setValueAt(lastVersion.getOldVersion(), r, CellConstants.VERSION_COL);
+					this.deletedItemModel.setValueAt(di.getItemLabel(), r, CellConstants.ITEM_COL);
+				}
+				
+				
+			}while (!lastVersion.equals(firstVersion));
+			log.debug("delete Table is ready");
+		}
+		
 	}
 	
 	public void clearAllComponents(){
 		this.diffTree.clearSelection();
 		this.diffTree.release();
 		deletedItemModel.clear();
+		this.clearVersionBoxes();
 		for (JCheckBoxMenuItem bi : catItems){
 			bi.setSelected(true);
 		}
@@ -215,6 +308,8 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 				log.info("release Diff Panel components");
 				this.dvm.clearAll();
 				this.clearAllComponents();
+			}else if (evt.getPropertyName().equals(VersionManager.ADD_VERSIONS)) {
+				this.initVersions();
 			}
 		}
 		
@@ -229,6 +324,13 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 		return this.dvc;
 		
 	}
+	
+	public Integer getFromVersion(){
+		return (Integer) this.fromBox.getSelectedItem();
+	}
 
+	public Integer getUntilVersion(){
+		return (Integer) this.toBox.getSelectedItem();
+	}
 	
 }
