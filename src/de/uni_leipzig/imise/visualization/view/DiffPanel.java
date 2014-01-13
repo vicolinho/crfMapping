@@ -203,7 +203,7 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 
 	public void updateDiffTree() {
 		
-		Integer lastKey = vm.getVersions().lastKey();
+		Integer lastKey = (Integer) this.toBox.getSelectedItem();
 		Integer firstKey = (Integer) this.fromBox.getSelectedItem();
 		if (firstKey<lastKey){
 			this.diffTree.release();
