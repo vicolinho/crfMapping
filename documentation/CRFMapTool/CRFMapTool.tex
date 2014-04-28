@@ -66,14 +66,19 @@ Matthias Löbe\end{flushright}
 \newpage
 \section{Einleitung}
 \subsection{Motivation}
-Die Resultate einer Studie basieren auf der Auswertung der in jeder Phase erfassten Daten bzlg. eines Patienten oder Probanden. Diese Daten werden mittels eines CRF (Check Report Form),auch Studienbogen genannt, erfasst. Diesbezüglich enthält ein solcher Bogen eine Menge von Datenfeldern(Items), die für die spätere Auswertung relevant sind.\\
-Zu Beginn einer Studie werden deshalb für jede Phase die relevanten Items inklusive ihrer Eigenschaften, Regeln und inhaltlichen Strukturierung ermittelt. Die Menge an CRF Bögen für die verschiedenen Studien können in einem klinischen Datenmanagementsystem verwaltet werden, wie z.B. \texttt{OpenClinica}. Im Allgemeinen ist die Entwicklung eines CRF Bogens ein fortlaufender Prozess, da im Verlauf der Studie fehlende oder unzureichend definierte Items identifiziert werden. Diese müssen in einer aktualisierten Version ergänzt bzw. geändert werden. Sei nun folgendes Szenario gegeben: Es wurden mittels eines CRF Bogens die relevanten Daten für die Phase der Aufnahme eines Patienten erfasst. Es wurde festgestellt, dass die Auswertung der Daten umständlich ist, so dass eine Anpassung des CRF Bogens erfolgen muss. Dennoch sollen die erfassten Daten weiter verwendet werden. Hierfür ist ein Mapping, eine Abbildung der alten Items auf die neuen Items, notwendig, um die alten Daten in das Schema des neuen CRF Bogens zu transformieren. Des Weiteren ist es für die Weiterentwicklung eines CRF Bogens hilfreich zu wissen, welche Items bisher geändert wurden, so dass eine gezielte Entwicklung fortgeführt werden kann. Da ein CRF Bogen potentiell eine hohe Anzahl an Datenfeldern beinhaltet und mehrere Versionen umfasst, ist eine manuelle Generierung eines Mappings für alle Versionen nicht effizient realisierbar. Eine weitere Problematik bzgl. der Änderungen von Items  ist die Relevanz der Änderung. Die Änderungen von Eigenschaften eines Items,die sich auf das Layout bzgl. des CRF Bogens beschränken, verursachen keine Änderung des medizinischen Konzepts, sodass existierende Daten auf das neue Item gemappt werden können. Die Transformation der Daten eines Items, deren medizinisches Konzept sich geändert hat, ist nicht ohne weiteres möglich. \\
+Die Resultate einer Studie basieren auf der Auswertung der in jeder Phase erfassten Daten bzlg. eines Patienten oder Probanden. Diese Daten werden mittels eines CRF (Check Report Form), auch Studienbogen genannt, erfasst. Diesbezüglich enthält ein solcher Bogen eine Menge von Datenfeldern (Items), die für die spätere Auswertung relevant sind.\\
+Zu Beginn einer Studie werden deshalb für jede Phase die relevanten Items inklusive ihrer Eigenschaften, Regeln und inhaltlichen Strukturierung ermittelt. Die Menge an CRF Bögen für die verschiedenen Studien können in einem klinischen Datenmanagementsystem verwaltet werden, wie z.B. \emph{OpenClinica}. Häufig ist die Entwicklung eines CRF Bogens ein fortlaufender Prozess, da im Verlauf der Studie fehlende oder unzureichend definierte Items identifiziert werden. Diese müssen in einer aktualisierten Version ergänzt bzw. geändert werden. Sei nun folgendes Szenario gegeben: Es wurden mittels eines CRF Bogens die relevanten Daten für die Phase der Aufnahme eines Patienten erfasst. Es wurde festgestellt, dass einige Daten detaillierter erfasst werden müssen, so dass eine Anpassung des CRF Bogens erfolgen muss. Dennoch sollen die erfassten Daten weiter verwendet werden. Hierfür ist ein Mapping, eine Abbildung der alten Items auf die neuen Items, notwendig, um die alten Daten in das Schema des neuen CRF Bogens zu transformieren. Des Weiteren ist es für die Weiterentwicklung eines CRF Bogens hilfreich zu wissen, welche Items bisher geändert wurden, so dass eine gezielte Entwicklung fortgeführt werden kann. Da ein CRF Bogen potentiell eine hohe Anzahl an Datenfeldern beinhaltet und mehrere Versionen umfasst, ist eine manuelle Generierung eines Mappings für alle Versionen nicht effizient realisierbar. Eine weitere Problematik bzgl. der Änderungen von Items  ist die Relevanz der Änderung. Die Änderungen von Eigenschaften eines Items, die sich auf das Layout bzgl. des CRF Bogens beschränken, verursachen keine Änderung des medizinischen Konzepts, so dass existierende Daten auf das neue Item gemappt werden können. Die Transformation der Daten eines Items, deren medizinisches Konzept sich geändert hat, ist nicht ohne weiteres möglich. \\
 \subsection {Zielsetzung}
-Das Ziel dieser Arbeit ist die Entwicklung einer Applikation für die Generierung eines Mappings für eine Menge von CRF Versionen und eine entsprechende Visualisierung, sodass eine effiziente Identifikation der Änderungen und deren Ursache möglich ist. Ein Mapping repräsentiert eine Abbildung von Items,die eine effiziente Identifikation von gelöschten, hinzugefügten und geänderten Items ermöglicht.\\
-Des Weiteren werden die geänderten Items bzgl. der Relevanz der Änderung klassifiziert, sodass eine Filterung bzgl. der Art der Änderung möglich ist.
+Das Ziel dieser Arbeit ist die Entwicklung einer Applikation für die Generierung eines Mappings für eine Menge von CRF Versionen und eine entsprechende Visualisierung, so dass eine effiziente Identifikation der Änderungen und deren Ursache möglich ist. Ein Mapping repräsentiert eine Abbildung von Items, die eine effiziente Identifikation von gelöschten, hinzugefügten und geänderten Items ermöglicht.\\
+Des Weiteren werden die geänderten Items bzgl. der Relevanz der Änderung klassifiziert, sodass eine Filterung bzgl. der Art der Änderung möglich ist. Bei der Realisierung der Applikation werden folgende Aspekte berücksichtigt:
+\begin{enumerate}
+	\item Die Berechnung der Mappings für eine Menge von CRF Versionen soll effektiv und effizient sein.
+	\item Die GUI der Applikation soll benutzerfreundlich sein und  Änderungen sollen intuitiv  erkennbar sein.
+	\item Die Klassifikation der Änderungen soll aussagekräftig bzgl. des Schweregrads der Änderung sein.
+\end{enumerate}
 \section{Grundlagen}
 \subsection{CRF Excel Spezifikation}
-Der Import eines CRF Bogens in das OpenClinica System erfolgt durch eine Excel Datei, die die Spezifikation der enthaltenden Datenfelder mit ihren Eigenschaften, Abschnitten und potentiellen Regeln für die Items in einzelnen Tabellen enthält. Das Schema der Excel Mappe entspricht dem Klassendiagramm in Abbildung \ref{fig:CRFExSchema}. \\
+Der Import eines CRF Bogens in das OpenClinica System erfolgt durch eine Excel- Datei, die die Spezifikation der enthaltenden Datenfelder mit ihren Eigenschaften, Abschnitten und potentiellen Regeln für die Items in einzelnen Tabellen enthält. Das Schema der Excel Mappe entspricht dem Klassendiagramm in Abbildung \ref{fig:CRFExSchema}. \\
 \begin{figure}[th]%
 \input{figures/CRFClasses}
 \caption{Datenschema der Excel Arbeitsmappe für einen CRF Bogen}%
@@ -82,14 +87,15 @@ Der Import eines CRF Bogens in das OpenClinica System erfolgt durch eine Excel D
 Die Klassen entsprechen den einzelnen Tabellen und die Attribute einer Klasse repräsentieren die Spalten der Tabelle. Die \texttt{CRF} Tabelle beinhaltet Informationen bzgl. des Namens des CRF, der Version, einer Beschreibung sowie Bemerkungen bzgl. der Erstellung.\\
 Die \texttt{Sections} Tabelle definiert die layoutspezifische Struktur der Items des CRF's. Items, die das gleiche \texttt{section\_label} Attribut aufweisen, werden auf der gleichen Seite aufgeführt. Jede Section wird durch das \texttt{section\_label} Attribut identifiziert. Visuell wird jeder Abschnitt durch eine Überschrift getrennt, die durch den \texttt{section\_title} spezifiziert wird.\\
 Die \texttt{Groups} Tabelle ermöglicht die Gruppierung von Items. Items, die das gleiche \texttt{group\_label} besitzen, erscheinen zusammen im CRF.
-Die Daten, die für die Auswertung notwendig sind, werden durch die Items eines CRF Bogens definiert. Die Spezifikation eines Items beinhaltet die Eigenschaften die in der Tabelle \ref{table:Items} aufgelistet sind.
+Die Daten, die für die Auswertung notwendig sind, werden durch die Items eines CRF Bogens definiert. Die Spezifikation eines Items beinhaltet die Eigenschaften die in der Tabelle \ref{table:Items} aufgelistet sind.\\
 \input{figures/itemdescr}%
+
 \section{Realisierung}
 Die Applikation ist in Java implementiert und verwendet für das Auslesen der Excel Dateien die Apache POI \footnote{http://poi.apache.org/} Bibliothek. \\
 Der Unterabschnitt \ref{sec:schema} beschreibt das zugrundeliegende Datenschema der Applikation. Im Unterabschnitt \ref{sec:workflow} wird der prinzipielle Ablauf der Applikation beschrieben. Abschließend wird detailliert auf die Berechnung der Unterschiede bzgl. einer Menge von CRF Versionen eingegangen. 
 
 \subsection{Datenschema}\label{sec:schema}
-Um einer potentiellen Veränderung der Excel Datei Spezifikation entgegenzuwirken, wurde ein eigenes generisches Datenschema für eine CRF Version konzipiert. Das Schema ist in Abbildung \ref{fig:CustomSchema} dargestellt.\\
+Um einer potentiellen Veränderung der Excel- Dateispezifikation entgegenzuwirken, wurde ein eigenes generisches Datenschema für eine CRF Version konzipiert. Das Schema ist in Abbildung \ref{fig:CustomSchema} dargestellt.\\
 Die \texttt{CRFVersion} Klasse aggregiert die \texttt{Sections}, \texttt{Groups} und \texttt{Items} Tabelle in Form einer Hashmap mit dem jeweiligen \texttt{label} Attribut als Schlüssel und dem dazugehörigen Objekt der Klasse \texttt{Section}, \texttt{Group} bzw. \texttt {Item} als Wert. Die Klassen \texttt{Section}, \texttt{Group} und \texttt{Item} sind prinzipiell gleich aufgebaut. Als Identifier besitzen sie ein \texttt{(item|section|group)\_label} Attribut und eine Hashmap \texttt{propertyMap}, die die Werte aller Spalten einer \texttt{Section}, einer \texttt{Group}, bzw. eines \texttt{Item} beinhaltet. Die Namen der Spalten fungieren als Schlüssel für die \texttt{propertyMap} und werden in der jeweiligen \texttt{(Item|Section|Group)Constants} Klasse gespeichert. Somit ist durch die lose Koppelung der Spalten zu einem Objekt mittels der \texttt{propertyMap} und der Konstanten, eine Veränderung der CRF Excelspezifikation trivial realisierbar.
 \begin{figure}[ht!]
 \input{figures/CustomClasses}%
@@ -101,15 +107,16 @@ Die \texttt{CRFVersion} Klasse aggregiert die \texttt{Sections}, \texttt{Groups}
 Der allgemeine Ablauf der Applikationslogik ist in Abbildung \ref{fig:workflow} dargestellt. Zu Beginn spezifiziert der Anwender eine Menge von CRF Versionen. Die Dateien werden mittels der POI Bibliothek ausgelesen und zu Objekten des eigenen Datenschemas transformiert. Anschließend werden iterativ die Änderungen der CRF Versionen ermittelt und die Änderungen nach ihrer Relevanz klassifiziert. Bei jeder Iteration werden zwei aufeinander folgend Versionen miteinander verglichen. Des Weiteren werden in jeder Iteration die Änderungen der Eigenschaften der Items bzgl. der Intensität ihres Ausmaßes klassifiziert. Die Änderungen werden in Form eines Baumes visualisiert, indem die aktuelle Version als Bezugspunkt für alle Änderungen der CRF Versionen dient.
 \begin{figure}[t]
 \center
-\input{figures/workflow}
+\includegraphics[width=0.15\columnwidth]{figures/workflow.pdf}
 \caption{Workflow der Applikation}%
 \label{fig:workflow}%
 \end{figure}
 \subsection{Diff-Berechnung}
 Die Menge der Änderungsoperationen wird als \texttt{Diff} bezeichnet. Die Ermittlung des Diff für eine Menge von CRF Versionen basiert auf dem fortlaufenden Vergleich von zwei CRF Versionen. Im Folgenden wird das Verfahren für die Ermittlung näher beschrieben.\\
-Die Eingabe der Methode sind zwei CRF Versionen. Das Ergebnis ist eine Menge von gleichen, gelöschten, hinzugefügten und geänderten Items. Die geänderten Items werden als Mapping von altem Item zu neuem Item repräsentiert. Des Weiteren wird für jedes Mapping die Menge der geänderten Eigenschaften sowie der alte und der neue Wert gespeichert. Das Vorgehen ist im Algorithmus \ref{alg:diff} dargestellt. Jedes Item der alten Version wird mit jedem Item der neuen Version verglichen, indem die \texttt{item\_labels} und die\texttt{propertyMap} Objekte verglichen werden (Zeile 3). Wenn diese gleich sind, sind die Items gleich und ein Repräsentant wird zu der Menge $eqItemSet$, die die Menge der gleichen Items repräsentiert, hinzugefügt (Zeile 4). Wenn keine Gleichheit besteht, ist das Item der alten Version gelöscht(Zeile 5-8) bzw. ist das Item der neuen Version hinzugefügt (Zeile 9-12). Da geänderte Items sich durch einen anderen Suffix beim \texttt{item\_label} unterscheiden, befinden sich in den Mengen $delItemSet$ und $addItemSet$ eventuell geänderte Items. Um die Menge der geänderten Items zu ermitteln, wird mithilfe eines Fuzzy- Matchers die Ähnlichkeit für jedes Item der $delItemSet$ Menge und jedem Item der $addItemSet$ Menge bestimmt (Zeile 13-23). Der Fuzzy- Matcher verwendet für die Berechnung der Ähnlichkeit eine Kombination der Editierdistanz für die \texttt{item\_labels} und die \texttt{description\_labels}. Als geändertes Item wird das Paar angesehen, dessen Ähnlichkeit größer als ein Threshold $\delta(0.6)$ ist und das die höchste Ähnlichkeit aufweist. Anschließend wird für jedes Paar die Menge der geänderten Eigenschaften, die die Spalten repräsentieren, ermittelt. \\
+Die Eingabe der Methode sind zwei CRF Versionen. Das Ergebnis ist eine Menge von gleichen, gelöschten, hinzugefügten und geänderten Items. Die geänderten Items werden als Mapping von altem Item zu neuem Item repräsentiert. Des Weiteren wird für jedes Mapping die Menge der geänderten Eigenschaften sowie der alte und der neue Wert gespeichert. Das Vorgehen ist im Algorithmus \ref{alg:diff} dargestellt. Jedes Item der alten Version wird mit jedem Item der neuen Version verglichen, indem die \texttt{item\_labels} und die\texttt{propertyMap} Objekte verglichen werden (Zeile 3). Wenn diese gleich sind, sind die Items gleich und ein Repräsentant wird zu der Menge $eqItemSet$, die die Menge der gleichen Items repräsentiert, hinzugefügt (Zeile 4). Nachdem alle gleichen Items ermittelt wurden, werden die gelöschten Items  bzw. die hinzugefügten Items ermittelt. Ein Item ist gelöscht bzw. hinzugefügt, wenn es ausschließlich in der alten Version bzw. in der neuen Version existiert. Die Ermittlung erfolgt durch die Iteration über alle Items der alten Version (resp. neuen Version) und alle Items der Menge $eqItemSet$, wenn das alte Item (resp. neue Item) keine Korrespondenz zu einem Item der Menge $eqItemSet$ aufweist (Zeile 7 resp. Zeile 11), wird es zu der Menge der gelöschten Items $delItemSet$ (Zeile 8) bzw. zu der Menge der neuen Items $addItemSet$ (Zeile 12) hinzugefügt. Die beiden Mengen enthalten jedoch ebenfalls modifizierte Items, da die Ermittlung der Korrespondenz auf der Gleichheit des Item Labels basiert. Da geänderte Items sich durch einen anderen Suffix beim \texttt{item\_label} unterscheiden, befinden sich in den Mengen $delItemSet$ und $addItemSet$ eventuell geänderte Items. Um die Menge der geänderten Items zu ermitteln, wird mithilfe eines Fuzzy- Matchers die Ähnlichkeit für jedes Item der $delItemSet$ Menge und jedem Item der $addItemSet$ Menge bestimmt (Zeile 13-23). Der Fuzzy- Matcher verwendet für die Berechnung der Ähnlichkeit eine Kombination der Editierdistanz für die \texttt{item\_labels} und die \texttt{description\_labels}. Als geändertes Item wird das Paar angesehen, dessen Ähnlichkeit größer als ein Threshold $\delta(0.6)$ ist und das die höchste Ähnlichkeit aufweist. Die Intention der Verwendung des Fuzzy- Matchers ist die Berücksichtigung einer mgl. minimalen Änderung des Item- Labels. Es wird dabei folgendes Szenarion betrachtet. Ein Item wird modifiziert, jedoch enthält das Label einen Rechtschreibfehler. Durch die Behebung des Rechtschreibfehlers ist die Modifikation nicht durch die ausschließliche Betrachtung des Suffixes erkennbar.  Nach der Identifikation der modifizierten Items wird für jedes Paar die Menge der geänderten Eigenschaften, die die Spalten repräsentieren, ermittelt. \\
 Diese Methode wird iterativ für die nächsten beiden Versionen fortgeführt, wobei die aktuelle neue Version, die alte Version ist und die darauffolgende die neue. Die Berechnung des Diff's ist abgeschlossen, wenn alle Versionen verarbeitet sind.
 \begin{algorithm}[t!] \label{alg:diff}
+\small
 \caption{Diff Berechnung für zwei CRF Versionen}
 \DontPrintSemicolon
 \SetKwData{io}{$oldItem$} \SetKwData{iN}{$newItem$} \SetKwData{ai}{$addItem$} \SetKwData{di}{$delItem$} 
@@ -131,7 +138,7 @@ Diese Methode wird iterativ für die nächsten beiden Versionen fortgeführt, wobei
 \For {\io $\in$ \vo}{
 	\For {$equalItem \in$ \eqI }
 		{
-			\If{\io.$item\_label$!=$equalItem.item\_label$}{
+			\If{\io.$item\_label \neq equalItem.item\_label$}{
 					\delI$\leftarrow$ \delI $\cup$ \io\;
 			}
 		
@@ -142,8 +149,8 @@ Diese Methode wird iterativ für die nächsten beiden Versionen fortgeführt, wobei
 	\For {\iN $\in$ \vn}{
 	\For {$equalItem \in$ \eqI }
 		{
-			\If{\iN.$item\_label$!=$equalItem.item\_label$}{
-					\delI$\leftarrow$ \delI $\cup$ \iN\;
+			\If{\iN.$item\_label \neq equalItem.item\_label$}{
+					\addI$\leftarrow$ \addI $\cup$ \iN\;
 			}
 		}
 	}
@@ -205,6 +212,14 @@ Diese Methode wird iterativ für die nächsten beiden Versionen fortgeführt, wobei
 	\item \emph{layout}\\
 	Diese Kategorie beinhaltet alle Änderungen, die sich auf die Anordnung und die Strukturierung der Datenfelder beziehen.
 \end{itemize} 
+\section{Installation und Konfiguration}
+Die Applikation ist frei verfügbar und kostenlos unter \url{https://github.com/vicolinho/crfMapping} herunterladbar. Die Applikation erfordert die Java Runtime Enviroment 1.7. Für die Weiterentwicklung der Applikation ist ein eigenes Java Projekt zu erstellen mit dem 'src' Ordner als Quellcodeordner. Des Weiteren sind alle Bibliotheken des 'lib' Ordner in den Klassenpfad einzutragen.\\
+Das Programm lässt sich  als Kommandozeilenprogramm ausführen mithilfe der 'config.properties' Datei. Diese Variante ermittelt für zwei CRF Versionen, die in der Konfigurationsdatei spezifiziert sind, die hinzugefügten, gelöschten und modifizierten Items. Die Applikation wird mithilfe von \texttt{ant runDiffCalculator} gestartet.\\
+Um die Applikation mit einer GUI zu starten ist der Aufruf \texttt{ant DiffCRFTool} erforderlich. Im Allgemeinen ist folgender Ablauf vorgesehen:
+\begin{enumerate}
+	\item Spezifikation der CRF Version im Menü 'File/Open'
+	\item Auf der linken Seite können alle CRF Versionen in einer Baumstruktur betrachtet werden. Auf der rechten Seite können die Änderungen berechnet und angezeigt werden. Des Weiteren ist die Anzeige der Änderungen filterbar bzgl. des Versionenintervalls und der Änderungskategorie.
+\end{enumerate}
 \section{Funktionsweise}
 Die Applikation besitzt drei basale Funktionalitäten, die Spezifikation der CRF Versionen, die Betrachtung der einzelnen CRF Versionen und die Betrachtung der Unterschiede der CRF Versionen im Bezug auf die aktuelle Version.\\
 Die Spezifikation der CRF Version erfolgt im Menü File/Open. Für die Betrachtung der Unterschiede müssen mindestens zwei Versionen eines CRF's selektiert werden.\\
@@ -214,14 +229,49 @@ Der Anwender ist in der Lage sich die einzelnen CRF Versionen einzeln zu betrach
 \caption{Darstellung der Items einer CRF Version in einem Baum inklusive der Ansicht der Eigenschaften eines Items in einer Tabelle}%
 \label{fig:crfView}%
 \end{figure}
-Die Änderungen werden auf der rechten Seite des Programms dargestellt(siehe Abb. \ref{fig:diffView}). Die Items der aktuellen Version werden in einem Baum dargestellt. Die geänderten Items werden farblich hervor gehoben. Des Weiteren werden alle Änderungen die ein Item betreffen chronologisch in einer Tabelle als Blattknoten des betreffenden Items dargestellt. Die Tabelle enthält die Versionsnummer von der vorherigen Version, den Namen des alten Items und die Art der Änderung. Bei der Selektion eines Eintrages der Tabelle, werden die geänderten Eigenschaften im unteren Teil in einer Tabelle präsentiert. Diese Tabelle enthält den Namen der geänderten Eigenschaft, den alten und neuen Wert und die Kategorie der Änderung. Der Anwender ist in der Lage die geänderten Items nach der Kategorie der Änderung zu filtern, indem er im category selection Menü die jeweiligen Kategorien selektiert. Des Weiteren ist das Intervall der zu betrachtenden Versionen mittels der Combo- Boxen spezifizierbar, sodass der Anwender nicht gezwungen ist die ganze Historie zu analysieren.  Die gelöschten Items werden in einer separaten Tabelle chronologisch nach ihrem Löschzeitpunkt präsentiert, da diese in der aktuellen Version nicht vorhanden sind.
-\begin{figure}[htb]%
-\center
-\includegraphics[width=\columnwidth]{figures/diffView.pdf}%
+Die Änderungen werden auf der rechten Seite des Programms dargestellt(siehe Abb. \ref{fig:diffView}). Die Items der aktuellen Version werden in einem Baum dargestellt. Die geänderten Items werden farblich hervor gehoben. Des Weiteren werden alle Änderungen die ein Item betreffen chronologisch in einer Tabelle als Blattknoten des betreffenden Items dargestellt. Die Tabelle enthält die Versionsnummer von der vorherigen Version, den Namen des alten Items und die Art der Änderung. Bei der Selektion eines Eintrages der Tabelle, werden die geänderten Eigenschaften im unteren Teil in einer Tabelle präsentiert. Diese Tabelle enthält den Namen der geänderten Eigenschaft, den alten und neuen Wert und die Kategorie der Änderung. Der Anwender ist in der Lage die geänderten Items nach der Kategorie der Änderung zu filtern, indem er im category selection Menü die jeweiligen Kategorien selektiert. Des Weiteren ist das Intervall der zu betrachtenden Versionen mittels der Combo- Boxen spezifizierbar, sodass der Anwender nicht gezwungen ist die ganze Historie zu analysieren.  Die gelöschten Items werden in einer separaten Tabelle chronologisch nach ihrem Löschzeitpunkt präsentiert, da diese in der aktuellen Version nicht vorhanden sind.\\
+\begin{figure}[b]
+\centering
+\includegraphics[width=0.75\columnwidth]{figures/diffView.pdf}%
 \caption{Darstellung der Änderung der geänderten Items und der geänderten Eigenschaften}%
 \label{fig:diffView}%
-\end{figure}
+\end{figure}\\
+Im Folgenden wird die Funktion der Änderungspräsentation anhand der CRF Versionen für die Medusa Studie in der Aufnahmephase veranschaulicht. Diese Phase umfasst 5 Versionen. Zu Beginn werden alle hinzugefügten und  gelöschten Items ermittelt inklusive der Version der Änderung. Abschließend werden alle Items ermittelt, deren Spezifikation sich geändert haben inklusiver der geänderten Spezifikation bzgl. des Items.
+\subsection{Hinzugefügte und Gelöschte Items}
+Diese Art der Items ist bei der Auswertung nicht problematisch, da die Daten bei hinzugefügten Items (resp. gelöschten Item) in die Auswertung einfließen bzw. nicht berücksichtigt werden. 
+Die Menge der hinzugefügten Items ist in Tabelle \ref{tab:addTab} dargestellt.
+\input{figures/addTable}
+Die Tabelle \ref{tab:delTab} veranschaulicht die gelöschten Items inklusive der Version, in der sie gültig waren. Die Daten dieser Items werden bei der Auswertung der Studie voraussichtlich nicht berücksichtigt.
+ \input{figures/delTable}
+\subsection{Geänderte Items}
+Im Folgenden werden alle geänderten Items identifiziert und die Änderungen dargestellt. Die Präsentation der Änderungen ist itemweise, da der Biometriker die Daten einer Menge von gemappten Items betrachten muss und somit eine versionsbezogene Visualisierung der Änderungen nicht geeignet ist. \\
+Bei der Identifikation der geänderten Items ist auffällig, dass viele Änderungen bzgl. zwei Versionen lediglich eine Änderung des \emph{Item Labels} beinhalten, wie z.B. ME\_InfUrsprung\_2 von Version 26 auf Version 28 ist keine Veränderung identifiziert wurden, außer beim Label. Die Ursache ist vermutlich die nicht strikte Einhaltung der Konvention, dass bei einer inhaltlichen Veränderung des Items der entsprechende Suffix für die Erweiterung des Labels verwendet wird. Die geänderten Items  über alle Versionen sind in der Tabelle \ref{tab:modTab} dargestellt.
+\input {figures/modTable}
+ Da die Menge der geänderten Items relativ hoch ist, wird eine Teilmenge der modifizierten Items betrachtet. Für jede Kategorie wird ein Repräsentant aufgeführt.  
+ \begin{itemize}
+	\item \emph{ME\_Harnstoff} (semantic)\\
+	Die Änderungen umfassen eine inhaltliche Spezifikation der Genauigkeit bzgl. der Angabe der Daten. Dies wird durch die Änderung des 'RIGHT ITEM TEXT' Feldes realisiert. Des Weiteren wird das Item von Seite 3 auf Seite 4 verschoben.
+	\item \emph {ME\_GlasgowComa} (semantic specialization)\\
+	Um eine Fehlinterpretation beim Ausfüllen des CRF zu vermeiden, wird das Feld 'LEFT ITEM TEXT' für dieses Item erweitert, von 	'Glasgow Coma Scale' auf	'Glasgow Coma Scale (ohne Sedierung)'.
+	\item \emph{ME\_InfUrsprung\_2} (response)\\
+	Die Antwortmöglichkeiten werden von der Version 10 zu der Version 21 spezifiziert, indem die Antwortmöglichkeit 'nosokomial (Normalstation/Pflegeheim)' zu zwei Antworten aufgetrennt wird. Diesbezüglich werden ebenfalls die Wertlisten erweitert, die im Studienmanagementsystem verwendet werden. Die Änderungen von Version 21 zu Version 26 umfasst lediglich die Änderung des Item Labels.
+	\item  \emph {ME\_SAPS}(validation)\\
+	Bei diesem Item wird die Validierungsfuktion verändert von 'func: lte(163)' zu 'func:range(0,163)', so dass Werte unter 0 ausgeschlossen werden. Dementsprechend ändert sich das 'VALIDATION\_ERROR\_MESSAGE' Feld.
+	\item \emph{ME\_Erkrankungen}(editing)\\
+	Dieses Item enthält eine Änderung der Codierung bzgl. der Anführungszeichen für den Wert des SUB HEADER Feldes. 
+	\item \emph{ME\_Natrium\_2} (layout)\\
+	Dieses Item ist exemplarisch für die Änderung des Layouts. Bei allen betrachteten CRF Versionen ist eine Änderung bzgl. des Layouts eine Veränderung der Seite von '3' auf '4'.
+\end{itemize}
 
+\section{Diskussion}
+Im Folgenden werden die erzielten Ergebnisse mit den gesetzten Zielen verglichen sowie weitere Erweiterungsmöglichkeiten präsentiert.
+\begin{enumerate}
+	\item Die Aufgabe des Tools ist die Unterstützung des Biometrikers beim Auswertungsprozess. Diesbezüglich muss er wissen, welche Items aufeinander gemappt werden. Somit muss das Tool effizient  sein, so dass der zeitliche Arbeitsprozess des Biometrikers nicht unnötig erhöht wird. Die Laufzeit der Berechnung des Diffs ist sehr gering, so beträgt die benötigte Zeit für die fünf CRF Versionen der  Medusa Studie für die Aufnahmephase lediglich 78 ms.
+\item Bei der Realisierung der Applikation wurde versucht eine hohe Benutzerfreundlichkeit zu realisieren, indem sich auf die wesentlichsten Funktionen beschränkt wurde. Alle möglichen Änderungen sind sofort erkennbar. Gelöschte Items befinden sich auf der rechten Seite der Applikation. Hinzugefügte Items befinden sich im Versionenbaum und sind durch ein 'Plus' Symbol erkennbar. Des Weiteren sind geänderte Items durch die farbliche Markierung sofort erkennbar. Mithilfe der Filterfunktionen bzgl. der angezeigten Versionen und der Kategorien ist eine einfache Identifizierung der Änderungen, für die sich der Biometriker interessiert, möglich.
+\item
+Die Klassifizierung der Änderungen bietet eine grobe Einstufung des Schweregrads. Jedoch sind keine detaillierten Aussagen ableitbar, da zum größten Teil die Klassifizierung abhängig ist von der geänderten Spalte der Excel- Tabelle und nicht die Wertänderungen inhaltlich mit einbezieht. Diesbezüglich wäre für zukünftige Arbeiten eine semantische Klassifizierung zu realisieren.
+\end{enumerate}
+Das Tool ist ausschließlich auf die Visualisierung der Änderungen ausgelegt. In zukünftigen Arbeiten wäre eine Exportfunktion bzgl. der Änderungen in eine Excel- Mappe sinnvoll, so dass ein Austausch der Änderungsinformationen in kompakter Form statt finden kann, ohne das Tool ausführen zu müssen.
 \section{Zusammenfassung}
 Diese Arbeit befasste sich mit der Entwicklung eines Tools, welches ein Mapping für eine Menge von CRF Versionen generiert. Ein Mapping repräsentiert eine Abbildung von alten Datenelementen auf die entsprechenden neuen Datenelemente der CRF Versionen.\\
 Generell werden CRFs verwendet, um auswertungsrelevante Daten für jede Phase einer klinischen Studie zu erfassen.

@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EventObject;
 import java.util.HashMap;
@@ -134,6 +135,7 @@ public class VersionTree extends JTree{
 	
 	public void updateCategory (HashMap<String,List<String>>categories, boolean isAdded,String cat){
 		List <String> itemLabels = categories.get(cat);
+		
 		if (itemLabels!= null){
 			for (String iLab: itemLabels){
 				CategoryNode cn = (CategoryNode) itemNodeMap.get(iLab);
@@ -149,16 +151,22 @@ public class VersionTree extends JTree{
 			String[] defaultCats){
 		HashSet<String> catSet = new HashSet<String> ();
 		Collections.addAll(catSet, defaultCats);
+		log.info(catSet);
+		for (String key :itemNodeMap.keySet()){
+			CategoryNode cn = (CategoryNode) itemNodeMap.get(key);
+			cn.color = null;
+		}
+		
 		for (Entry<String,List<String>> e:categories.entrySet()){
-			
+			log.info(e.getKey()+":"+e.getValue().toString());
 			for (String iLabel: e.getValue()){
 				CategoryNode cn = (CategoryNode) itemNodeMap.get(iLabel);
+				
 				if (catSet.contains(e.getKey())){
-					cn.category = e.getKey();
+					log.info(e.getKey());
 					Color c = Color.ORANGE;
 					cn.color = c;
-				}else{
-					cn.color = null;
+					
 				}
 			}
 		}
@@ -175,7 +183,6 @@ public class VersionTree extends JTree{
 	
 	private class CategoryNode extends DefaultMutableTreeNode {
 		private Color color ;
-		private String category; 
 		private CategoryNode(Object userObject){
 			super(userObject);
 		}

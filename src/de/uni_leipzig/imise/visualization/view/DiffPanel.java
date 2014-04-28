@@ -157,7 +157,7 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 	private void initCategoryItems() {
 		for (String cat : CategoryConstants.DEFAULT_CATS){
 			JCheckBoxMenuItem cbi = new JCheckBoxMenuItem(cat);
-			cbi.setActionCommand(cat);
+			cbi.setActionCommand(cat.trim());
 			cbi.setSelected(true);
 			cbi.addActionListener(dvc);
 			this.mnNewMenu.add(cbi);
@@ -194,6 +194,7 @@ public final class DiffPanel extends JPanel implements PropertyChangeListener{
 					selCats.add(bi.getActionCommand());
 				}
 			}
+			
 			this.diffTree.updateCategoryColors(
 					dvm.getCategoryItemMap(), selCats.toArray(new String[]{}));
 			this.diffTree.updateUI();

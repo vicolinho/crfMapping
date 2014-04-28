@@ -54,6 +54,7 @@ public class DiffVersionController implements ActionListener, ListSelectionListe
 		if (e.getActionCommand().equals(EventConstants.DIFF_CALC)){
 			if (!vm.getVersions().isEmpty()){
 				if (dvm.isEmpty()){
+					long time = System.currentTimeMillis();
 					for (Entry<Integer,CRFVersion> entry:vm.getVersions().entrySet()){
 						Integer nextKey = vm.getVersions().higherKey(entry.getKey());
 						if (nextKey!=null){
@@ -74,15 +75,20 @@ public class DiffVersionController implements ActionListener, ListSelectionListe
 							dvm.addDiff(vp, dv);
 						}
 					}
+					System.out.println(System.currentTimeMillis()-time);
 					dvp.updateDiffTree();
 					dvp.updateDeletedTable();
 				}
 			}else {
-				JOptionPane.showConfirmDialog(null, "Sie müssen eine Menge von CRF Versionen vorab laden", "Keine Versionen", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showConfirmDialog(null, "You have to load a set of CRF versions", "No versions available", JOptionPane.WARNING_MESSAGE);
 			}
 		}else if (e.getActionCommand().equals(EventConstants.SHOW)){
+			if (!dvm.isEmpty()&&!vm.getVersions().isEmpty()){
 			dvp.updateDiffTree();
 			dvp.updateDeletedTable();
+			}else{
+				JOptionPane.showConfirmDialog(null, "You have to calculate the changes before you select a specific interval.", "No changes available", JOptionPane.WARNING_MESSAGE);
+			}
 		}else if (e.getSource() instanceof JCheckBoxMenuItem){
 		
 			dvp.updateColorTree();
