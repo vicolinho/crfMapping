@@ -43,7 +43,7 @@ public class ChangeClassifier {
 	   
 	    classMap.put(ItemConstants.VALIDATION, CategoryConstants.VALIDATION);
 	    classMap.put(ItemConstants.SUBHEADER, CategoryConstants.SEMANTIC);
-	    classMap.put(ItemConstants.VALIDATION_ERROR_MESSAGE, CategoryConstants.MESSAGE);
+	    classMap.put(ItemConstants.VALIDATION_ERROR_MESSAGE, CategoryConstants.VALIDATION);
 	    classMap.put(ItemConstants.WIDTH_DECIMAL, CategoryConstants.LAYOUT);
 		this.notSmallEditCategories.add(ItemConstants.PHI);
 		this.notSmallEditCategories.add(ItemConstants.PAGE_NUMBER);

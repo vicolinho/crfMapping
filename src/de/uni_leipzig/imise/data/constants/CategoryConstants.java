@@ -10,8 +10,8 @@ public class CategoryConstants {
 	public static final String SEMANTIC_SPEC ="semantic specialization";
 	public static final String VALIDATION ="validation";
 	
-	public static String MESSAGE ="message";
+	//public static String MESSAGE ="message";
 	
 	public static final String[] DEFAULT_CATS ={LAYOUT,RELATION,RESPONSE,EDIT,
-		SEMANTIC,VALIDATION,MESSAGE,SEMANTIC_SPEC};
+		SEMANTIC,VALIDATION,SEMANTIC_SPEC};
 }
