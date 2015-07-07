@@ -20,8 +20,7 @@ Furthermore, it shows the modified items with the property changes.
 <li>run ant DiffCRFTool</li>
 <li> Specify the CRF Versions with the menu item Datei/Öffnen.
 <li> On the left hand side you can look at every loaded version. On the right hand side you can calculcate the differences of
-all versions. The tree shows the last version with his items. Every item, which was modified has a child node,
-which contains a table, which contains the change history. If you select a older item of the table,
- the application presents in a table the properties,
-which were changed, the old and new values.
+all versions. The tree shows the last version with its items. Every item that was modified has a child node that
+contains a table. The table present the change history of the selected item. If you select an older item of the table,
+ the application shows the properties that were changed, the old as well as the new values.
 </ol>
